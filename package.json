@@ -1,12 +1,16 @@
 {
 	"name": "@jacoblockett/sweetroll",
 	"version": "0.1.0",
-	"description": "",
+	"description": "Wrappers for JavaScript's native primitives and objects",
 	"main": "index.js",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jacoblockett/sweetroll"
+	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"sandbox": "clear && node sandbox.js"
+		"sandbox": "clear && nodemon --quiet sandbox.js"
 	},
 	"author": "Jacob Lockett",
 	"license": "ISC",

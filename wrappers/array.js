@@ -600,13 +600,14 @@ class SweetArray {
 
 	/**
 	 * Gets the item at the given index. If the index is negative, this function will count
-	 * backwards from the end of the SweetArray instead.
+	 * backwards from the end of the SweetArray instead. Will return undefined if the index
+	 * is out of range.
 	 *
 	 * @param {Number} index The index of the item to get
 	 * @returns {any}
 	 */
 	getItem(index) {
-		if (!isNumber) {
+		if (!isNumber(index)) {
 			throw new Error(`Expected index to be a number`)
 		}
 

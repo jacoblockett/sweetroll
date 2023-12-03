@@ -1,34 +1,36 @@
+import Graphemer from "graphemer"
 import { INVISIBLE_CHARACTER } from "../utils/constants.js"
 import { isNumber, isString } from "../utils/is.js"
+import { arrayFromString } from "../utils/arrayFrom.js"
 
-class PNPString {
+class SweetString {
 	#self
 
 	/**
-	 * Creates a PNPString - a String with extra umph.
+	 * Creates a SweetString - a String with extra umph.
 	 *
-	 * PNPStrings will always re-index a given string so that characters outside of the
+	 * SweetStrings will always re-index a given string so that characters outside of the
 	 * Basic Multilingual Plane are handled intuitively and interaction with lone surrogates
 	 * are kept to a minimum. i.e.
 	 *
-	 * `new PNPString("💩🦄🍦").length // => 3`
+	 * `new SweetString("💩🦄🍦").length // => 3`
 	 *
-	 * `new PNPString("💩🦄🍦").getChar(1) // => 🦄`
+	 * `new SweetString("💩🦄🍦").getChar(1) // => 🦄`
 	 *
-	 * @param {String|PNPString} string The string or PNPString to load
-	 * @returns {PNPString}
+	 * @param {String|SweetString} string The string or SweetString to load
+	 * @returns {SweetString}
 	 */
 	constructor(string = "") {
-		if (string instanceof PNPString) {
+		if (string instanceof SweetString) {
 			string = string.unwrap()
 		}
 
 		if (!isString(string)) {
-			throw new Error(`Expected string to be a string or PNPString`)
+			throw new Error(`Expected string to be a string or SweetString`)
 		}
 
 		this[INVISIBLE_CHARACTER] = "Use .unwrap() to retrieve the underlying data"
-		this.#self = [...string]
+		this.#self = arrayFromString(string)
 	}
 
 	/**
@@ -50,18 +52,18 @@ class PNPString {
 	/**
 	 * Verifies and returns an array containing the string literal and re-indexed length of the string.
 	 *
-	 * - Note: Throws the error message if not a string/PNPString.
+	 * - Note: Throws the error message if not a string/SweetString.
 	 *
 	 * @param {any} string The argument to check
-	 * @param {String} [errorMsg] The error message to throw if not a string or PNPString
+	 * @param {String} [errorMsg] The error message to throw if not a string or SweetString
 	 * @returns {Array<[string: String, length: Number, indexedString: Array]>}
 	 */
-	#parseStringArgument(string, errorMsg = `Expected a string or PNPString`) {
+	#parseStringArgument(string, errorMsg = `Expected a string or SweetString`) {
 		if (isString(string)) {
 			const split = [...string]
 			return [string, split.length, split]
 		}
-		if (string instanceof PNPString) {
+		if (string instanceof SweetString) {
 			const unwrappedSplit = [...string.unwrap()]
 			return [string.unwrap(), string.length, unwrappedSplit]
 		}
@@ -71,15 +73,15 @@ class PNPString {
 
 	/**
 	 * TODO!!!
-	 * Attempts to coerce the given value into a PNPString.
+	 * Attempts to coerce the given value into a SweetString.
 	 *
 	 * @param {any} value The value to create a string from
-	 * @returns {PNPString}
+	 * @returns {SweetString}
 	 */
 	static from(value) {}
 
 	/**
-	 * Retrieves the length of the PNPString.
+	 * Retrieves the length of the SweetString.
 	 *
 	 * @returns {Number}
 	 */
@@ -88,10 +90,10 @@ class PNPString {
 	}
 
 	/**
-	 * Appends strings or PNPStrings to the end of the PNPString.
+	 * Appends strings or SweetStrings to the end of the SweetString.
 	 *
-	 * @param {...PNPString|String} strings The strings to append
-	 * @returns {PNPString}
+	 * @param {...SweetString|String} strings The strings to append
+	 * @returns {SweetString}
 	 */
 	append(...strings) {
 		if (strings.length === 0) {
@@ -106,13 +108,27 @@ class PNPString {
 			newString += string
 		}
 
-		return new PNPString(newString)
+		return new SweetString(newString)
+	}
+
+	convertCodepointIndexToLogicalIndex(codepointIndex) {
+		let count = 0
+
+		for (let i = 0; i < this.#self.length; i++) {
+			const char = this.#self[i]
+
+			count += char.length
+
+			if (count >= codepointIndex) return i
+		}
+
+		return -1
 	}
 
 	/**
-	 * Checks if the provided string or PNPString exists at the end of the PNPString.
+	 * Checks if the provided string or SweetString exists at the end of the SweetString.
 	 *
-	 * @param {String|PNPString} string The string to check for existence
+	 * @param {String|SweetString} string The string to check for existence
 	 * @returns {Boolean}
 	 */
 	endsWith(string) {
@@ -131,7 +147,7 @@ class PNPString {
 	/**
 	 * Finds the first index of the given substring.
 	 *
-	 * @param {String|PNPString} substring The substring to find the index of
+	 * @param {String|SweetString} substring The substring to find the index of
 	 * @returns {Number|undefined}
 	 */
 	firstIndexOf(substring) {
@@ -160,10 +176,10 @@ class PNPString {
 
 	/**
 	 * Gets the character at the given index. If the index is negative, this function will count
-	 * backwards from the end of the PNPString instead.
+	 * backwards from the end of the SweetString instead.
 	 *
 	 * @param {Number} index The index of the character to get
-	 * @returns {PNPString|undefined}
+	 * @returns {SweetString|undefined}
 	 */
 	getChar(index) {
 		if (!isNumber) {
@@ -176,12 +192,12 @@ class PNPString {
 
 		const found = this.#self[index]
 
-		return found === undefined ? undefined : new PNPString(this.#self[index])
+		return found === undefined ? undefined : new SweetString(this.#self[index])
 	}
 
 	/**
 	 * Gets the character codepoint at the given index. If the index is negative, this
-	 * function will count backwards from the end of the PNPString instead.
+	 * function will count backwards from the end of the SweetString instead.
 	 *
 	 * @param {Number} index The index of the character to convert to a codepoint
 	 * @returns {Number|undefined}
@@ -201,9 +217,9 @@ class PNPString {
 	}
 
 	/**
-	 * Checks if the given character exists within the PNPString.
+	 * Checks if the given character exists within the SweetString.
 	 *
-	 * @param {String|PNPString} character The character to check for existence
+	 * @param {String|SweetString} character The character to check for existence
 	 * @returns {Boolean}
 	 */
 	hasChar(character) {
@@ -219,13 +235,13 @@ class PNPString {
 	}
 
 	/**
-	 * Checks if the given substring exists within the PNPString.
+	 * Checks if the given substring exists within the SweetString.
 	 *
 	 * - Note: This is pretty much a bit more powerful a version of `.hasChar()`. Might show a
 	 * teeny eensy weensy itty bitty performance gain using that method for single characters, but
 	 * probably not.
 	 *
-	 * @param {String|PNPString} substring The substring to check for existence
+	 * @param {String|SweetString} substring The substring to check for existence
 	 * @returns {Boolean}
 	 */
 	hasSubstring(substring) {
@@ -253,32 +269,32 @@ class PNPString {
 	}
 
 	/**
-	 * Checks if the PNPString is a substring of the given value. Value can be anything,
-	 * but in order to return true, value will need to be a string or PNPString of course.
+	 * Checks if the SweetString is a substring of the given value. Value can be anything,
+	 * but in order to return true, value will need to be a string or SweetString of course.
 	 *
-	 * @param {any} value The comparison value to check the PNPString against
+	 * @param {any} value The comparison value to check the SweetString against
 	 * @returns {Boolean}
 	 */
 	isSubstringOf(value) {
-		if (!isString(value) && !(value instanceof PNPString)) {
+		if (!isString(value) && !(value instanceof SweetString)) {
 			return false
 		}
 
-		if (value instanceof PNPString) {
+		if (value instanceof SweetString) {
 			return value.hasSubstring(this)
 		} else {
-			return new PNPString(value).hasSubstring(this)
+			return new SweetString(value).hasSubstring(this)
 		}
 	}
 
 	/**
 	 * Finds the last index of the given substring.
 	 *
-	 * @param {String|PNPString} substring The substring to find the index of
+	 * @param {String|SweetString} substring The substring to find the index of
 	 * @returns {Number|undefined}
 	 */
 	lastIndexOf(substring) {
-		const string = new PNPString(substring)
+		const string = new SweetString(substring)
 		const stringLiteral = string.unwrap()
 		const indexed = string.split()
 
@@ -320,10 +336,10 @@ class PNPString {
 	}
 
 	/**
-	 * Prepends strings or PNPStrings to the beginning of the PNPString.
+	 * Prepends strings or SweetStrings to the beginning of the SweetString.
 	 *
-	 * @param {...PNPString|String} strings The strings to prepend
-	 * @returns {PNPString}
+	 * @param {...SweetString|String} strings The strings to prepend
+	 * @returns {SweetString}
 	 */
 	prepend(...strings) {
 		if (strings.length === 0) {
@@ -338,11 +354,11 @@ class PNPString {
 			newString = string + newString
 		}
 
-		return new PNPString(newString)
+		return new SweetString(newString)
 	}
 
 	split(substring = "") {
-		const str = new PNPString(substring)
+		const str = new SweetString(substring)
 
 		if (str.unwrap() === "") {
 			return this.#self
@@ -352,7 +368,7 @@ class PNPString {
 	}
 
 	/**
-	 * Checks if the provided string or PNPString exists at the beginning of the PNPString.
+	 * Checks if the provided string or SweetString exists at the beginning of the SweetString.
 	 *
 	 * @param {String} string The string to check for existence
 	 * @returns {Boolean}
@@ -376,6 +392,6 @@ class PNPString {
 	}
 }
 
-PNPString.prototype.valueOf = PNPString.prototype.unwrap
+SweetString.prototype.valueOf = SweetString.prototype.unwrap
 
-export default PNPString
+export default SweetString

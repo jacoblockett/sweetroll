@@ -1,14 +1,14 @@
 import { INVISIBLE_CHARACTER } from "../utils/constants.js"
 import { isObject, isArray, isString } from "../utils/is.js"
 
-class PNPObject {
+class SweetObject {
 	#self
 
 	/**
-	 * Creates a PNPObject - an Object with extra umph.
+	 * Creates a SweetObject - an Object with extra umph.
 	 *
-	 * @param {Record<String|Number, any>} value The object to initialize the PNPObject with
-	 * @returns {PNPObject}
+	 * @param {Record<String|Number, any>} value The object to initialize the SweetObject with
+	 * @returns {SweetObject}
 	 */
 	constructor(value) {
 		if (!isObject(value)) {
@@ -56,4 +56,4 @@ class PNPObject {
 	}
 }
 
-export default PNPObject
+export default SweetObject

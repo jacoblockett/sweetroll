@@ -88,11 +88,13 @@ const arrayFromSet = (set, mapCallback) => {
 	return array
 }
 
+const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" })
 const arrayFromString = (string, mapCallback) => {
+	const segments = [...segmenter.segment(string)]
 	const array = []
 
-	for (let i = 0; i < string.length; i++) {
-		let value = string[i]
+	for (let i = 0; i < segments.length; i++) {
+		let value = segments[i].segment
 
 		if (mapCallback) {
 			value = mapCallback(value, i)
