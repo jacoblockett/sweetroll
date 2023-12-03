@@ -1,7 +1,7 @@
-import Graphemer from "graphemer"
 import { INVISIBLE_CHARACTER } from "../utils/constants.js"
 import { isNumber, isString } from "../utils/is.js"
 import { arrayFromString } from "../utils/arrayFrom.js"
+import SweetArray from "./array.js"
 
 class SweetString {
 	#self
@@ -56,16 +56,14 @@ class SweetString {
 	 *
 	 * @param {any} string The argument to check
 	 * @param {String} [errorMsg] The error message to throw if not a string or SweetString
-	 * @returns {Array<[string: String, length: Number, indexedString: Array]>}
+	 * @returns {Array<[string: String, length: Number, indexedString: string[]]>}
 	 */
 	#parseStringArgument(string, errorMsg = `Expected a string or SweetString`) {
 		if (isString(string)) {
-			const split = [...string]
-			return [string, split.length, split]
+			return [string, split.length, arrayFromString(string)]
 		}
 		if (string instanceof SweetString) {
-			const unwrappedSplit = [...string.unwrap()]
-			return [string.unwrap(), string.length, unwrappedSplit]
+			return [string.unwrap(), string.length, string.toArray()]
 		}
 
 		throw new Error(errorMsg)
@@ -111,7 +109,30 @@ class SweetString {
 		return new SweetString(newString)
 	}
 
+	/**
+	 * Converts the given codepoint index to a logical, grapheme-based index.
+	 *
+	 * Consider the following string `const str = "family 👨‍👩‍👦 emoji"`. If you were to access
+	 * a char from this string using traditional indexing, you might get unexpected
+	 * results due to the emoji's surrogate siblings. For example, `str[9]` should return "e"
+	 * from the word "emoji", but instead would return a broken or lone surrogate from the emoji
+	 * since the family emoji actually extends for 8 unicode codepoints long. If you wanted
+	 * to access the "e" in "emoji" traditionally, then, you would need to ask for `str[16]`.
+	 * This, of course, can be solved by many a library, including this one. But, what if you had
+	 * received the codepoint index `16` from some arbitrary function to use with a split array
+	 * of logical characters representing the string? The codepoint index no longer applies since
+	 * the array representation no longer indexes the string in the same way.
+	 *
+	 * Enter this verbosely named function. It will convert that codepoint index into the logical
+	 * index for use later down the road. In our current example, it would convert `16` into `9`.
+	 *
+	 * @param {number} codepointIndex
+	 * @returns {LogicalIndex<number> | undefined}
+	 */
 	convertCodepointIndexToLogicalIndex(codepointIndex) {
+		if (codepointIndex < 0 || codepointIndex >= this.#join().length)
+			return undefined
+
 		let count = 0
 
 		for (let i = 0; i < this.#self.length; i++) {
@@ -119,10 +140,10 @@ class SweetString {
 
 			count += char.length
 
-			if (count >= codepointIndex) return i
+			if (count > codepointIndex) return i
 		}
 
-		return -1
+		return undefined
 	}
 
 	/**
@@ -182,7 +203,7 @@ class SweetString {
 	 * @returns {SweetString|undefined}
 	 */
 	getChar(index) {
-		if (!isNumber) {
+		if (!isNumber(index)) {
 			throw new Error(`Expected index to be a number`)
 		}
 
@@ -203,7 +224,7 @@ class SweetString {
 	 * @returns {Number|undefined}
 	 */
 	getCharCode(index) {
-		if (!isNumber) {
+		if (!isNumber(index)) {
 			throw new Error(`Expected index to be a number`)
 		}
 
@@ -380,6 +401,42 @@ class SweetString {
 		if (str !== beginning) return false
 
 		return true
+	}
+
+	/**
+	 * Returns a traditional array representing the split SweetString.
+	 *
+	 * @returns {string[]}
+	 */
+	toArray() {
+		return this.#self
+	}
+
+	/**
+	 * Returns a SweetArray representing the split SweetString.
+	 *
+	 * @returns {SweetArray}
+	 */
+	toSweetArray() {
+		return new SweetArray(this.#self)
+	}
+
+	/**
+	 * Returns a traditional array of SweetStrings representing the split SweetString.
+	 *
+	 * @returns {SweetString[]}
+	 */
+	toSweetStringArray() {
+		return this.#self.map(char => new SweetString(char))
+	}
+
+	/**
+	 * Returns a SweetArray of SweetStrings representing the split SweetString.
+	 *
+	 * @returns {SweetArray}
+	 */
+	toSweetStringSweetArray() {
+		return SweetArray.from(this.#self.map(char => new SweetString(char)))
 	}
 
 	/**
