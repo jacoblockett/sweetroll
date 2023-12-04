@@ -1,6 +1,6 @@
 {
 	"name": "@jacoblockett/sweetroll",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "Wrappers for JavaScript's native primitives and objects",
 	"main": "index.js",
 	"type": "module",
