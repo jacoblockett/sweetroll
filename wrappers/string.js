@@ -36,6 +36,8 @@ class SweetString {
 	/**
 	 * Joins the given string array into a string literal.
 	 *
+	 * Default stringArray value is this.#self
+	 *
 	 * @param {string[]} [stringArray]
 	 * @returns {string}
 	 */
@@ -173,23 +175,24 @@ class SweetString {
 	 * @returns {IndexOfFoundChar<number>|undefined}
 	 */
 	firstIndexOf(substring) {
-		const [str, strLen] = this.#parseStringArgument(substring)
+		const [substr, len] = this.#parseStringArgument(substring)
 
-		if (strLen === 1) {
+		if (this.#join() === substr) return 0
+		if (len === 1) {
 			for (let i = 0; i < this.#self.length; i++) {
-				if (this.#self[i] === str) {
+				if (this.#self[i] === substr) {
 					return i
 				}
 			}
 		} else {
 			for (let i = 0; i < this.#self.length; i++) {
-				if (this.#self.length - i < strLen) {
+				if (this.#self.length - i < len) {
 					return undefined
 				}
 
-				const sub = this.#join(this.#self.slice(i, strLen + i))
+				const sub = this.#join(this.#self.slice(i, len + i))
 
-				if (sub === str) return i
+				if (sub === substr) return i
 			}
 		}
 
@@ -272,9 +275,8 @@ class SweetString {
 	/**
 	 * Checks if the given substring exists within the SweetString.
 	 *
-	 * - Note: This is pretty much a bit more powerful a version of `.hasChar()`. Might show a
-	 * teeny eensy weensy itty bitty performance gain using that method for single characters, but
-	 * probably not.
+	 * - Note: For checking if a single character exists in a SweetString, it is
+	 * recommended to use `hasChar` instead.
 	 *
 	 * @param {string|SweetString} substring The substring to check for existence
 	 * @returns {boolean}
@@ -329,41 +331,20 @@ class SweetString {
 	 * @returns {number|undefined}
 	 */
 	lastIndexOf(substring) {
-		const string = new SweetString(substring)
-		const stringLiteral = string.unwrap()
-		const indexed = string.split()
+		const [substr, len] = this.#parseStringArgument(substring)
 
-		let hasNonstandard = false
-		for (let i = 0; i < indexed.length; i++) {
-			if (indexed[i].length > 1) {
-				hasNonstandard = true
-				break
-			}
-		}
-
-		if (!hasNonstandard) {
-			const found = this.unwrap().lastIndexOf(stringLiteral)
-
-			return found < 0 ? undefined : found
-		}
-
-		if (string.length === 1) {
+		if (this.#join() === substr) return 0
+		if (len === 1) {
 			for (let i = this.#self.length - 1; i >= 0; i--) {
-				if (this.#self[i] === stringLiteral) return i
+				if (this.#self[i] === substr) {
+					return i
+				}
 			}
 		} else {
-			const firstChar = indexed[0]
-			let buffer
-			for (let i = this.#self.length - string.length; i >= 0; i--) {
-				if (this.#self[i] === firstChar) {
-					buffer = ""
+			for (let i = this.#self.length - 1 - len; i >= 0; i--) {
+				const sub = this.#join(this.#self.slice(i, len + i))
 
-					for (let j = i; j <= i + string.length - 1; j++) {
-						buffer = buffer + this.#self[j]
-					}
-
-					if (buffer === stringLiteral) return i
-				}
+				if (sub === substr) return i
 			}
 		}
 
