@@ -60,7 +60,8 @@ class SweetString {
 	 */
 	#parseStringArgument(string, errorMsg = `Expected a string or SweetString`) {
 		if (isString(string)) {
-			return [string, split.length, arrayFromString(string)]
+			const split = arrayFromString(string)
+			return [string, split.length, split]
 		}
 		if (string instanceof SweetString) {
 			return [string.unwrap(), string.length, string.toArray()]
@@ -217,13 +218,13 @@ class SweetString {
 	}
 
 	/**
-	 * Gets the character codepoint at the given index. If the index is negative, this
+	 * Gets the character codepoint(s) at the given index. If the index is negative, this
 	 * function will count backwards from the end of the SweetString instead.
 	 *
-	 * @param {Number} index The index of the character to convert to a codepoint
-	 * @returns {Number|undefined}
+	 * @param {Number} index The index of the character to convert to a codepoint array
+	 * @returns {Number[]|undefined}
 	 */
-	getCharCode(index) {
+	getCharCodes(index) {
 		if (!isNumber(index)) {
 			throw new Error(`Expected index to be a number`)
 		}
@@ -234,7 +235,15 @@ class SweetString {
 
 		const found = this.#self[index]
 
-		return found === undefined ? undefined : this.#self[index].codePointAt(0)
+		if (found === undefined) return undefined
+
+		const codepoints = []
+
+		for (let i = 0; i < found.length; i++) {
+			codepoints[codepoints.length] = found[i].codePointAt(0)
+		}
+
+		return codepoints
 	}
 
 	/**
