@@ -214,7 +214,9 @@ class SweetString {
 
 		const found = this.#self[index]
 
-		return found === undefined ? undefined : new SweetString(this.#self[index])
+		if (found === undefined) return undefined
+
+		return new SweetString(found)
 	}
 
 	/**
