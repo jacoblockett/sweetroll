@@ -1,6 +1,18 @@
 import SweetArray from "../wrappers/array"
 import SweetString from "../wrappers/string"
 
+test("SweetString.length value check", () => {
+	expect(new SweetString("abc").length).toStrictEqual(3)
+	expect(new SweetString("💩").length).toStrictEqual(1)
+	expect(new SweetString("👨‍👩‍👧‍👦").length).toStrictEqual(1)
+})
+
+test("SweetString.codepointLength value check", () => {
+	expect(new SweetString("abc").codepointLength).toStrictEqual(3)
+	expect(new SweetString("💩").codepointLength).toStrictEqual(2)
+	expect(new SweetString("👨‍👩‍👧‍👦").codepointLength).toStrictEqual(11)
+})
+
 const string = new SweetString("abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘")
 
 test("SweetString.append('abc') instance check", () => {
