@@ -98,7 +98,7 @@ class SweetString {
 	 */
 	append(...strings) {
 		if (strings.length === 0) {
-			return this
+			throw new Error(`Expected at least one string to be passed in`)
 		}
 
 		let newString = this.#join()
