@@ -80,9 +80,9 @@ class SweetString {
 	static from(value) {}
 
 	/**
-	 * Retrieves the length of the SweetString.
+	 * Retrieves the char length of the SweetString.
 	 *
-	 * @returns {number}
+	 * @returns {SweetStringCharLength<number>}
 	 */
 	get length() {
 		return this.#self.length
@@ -170,7 +170,7 @@ class SweetString {
 	 * Finds the first index of the given substring.
 	 *
 	 * @param {string|SweetString} substring The substring to find the index of
-	 * @returns {number|undefined}
+	 * @returns {IndexOfFoundChar<number>|undefined}
 	 */
 	firstIndexOf(substring) {
 		const [str, strLen] = this.#parseStringArgument(substring)
@@ -224,7 +224,7 @@ class SweetString {
 	 * function will count backwards from the end of the SweetString instead.
 	 *
 	 * @param {number} index The index of the character to convert to a codepoint array
-	 * @returns {number[]|undefined}
+	 * @returns {CharCodes<number[]>|undefined}
 	 */
 	getCharCodes(index) {
 		if (!isNumber(index)) {
@@ -255,7 +255,10 @@ class SweetString {
 	 * @returns {boolean}
 	 */
 	hasChar(character) {
-		const [char] = this.#parseStringArgument(character)
+		const [char, len] = this.#parseStringArgument(character)
+
+		if (len > 1)
+			throw new Error(`Expected provided character to be a single character`)
 
 		for (let i = 0; i < this.#self.length; i++) {
 			if (this.#self[i] === char) {
