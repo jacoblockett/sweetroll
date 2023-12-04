@@ -82,6 +82,18 @@ class SweetString {
 	static from(value) {}
 
 	/**
+	 * Retrieves the raw length of the SweetString's underlying string. This will
+	 * essentially show what the length property would show on a traditional
+	 * string, inclusive of all the additional codepoints used to make up the
+	 * visual characters of the string.
+	 *
+	 * @returns {SweetStringCharLength<number>}
+	 */
+	get codepointLength() {
+		return this.#join().length
+	}
+
+	/**
 	 * Retrieves the char length of the SweetString.
 	 *
 	 * @returns {SweetStringCharLength<number>}
