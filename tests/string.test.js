@@ -1,3 +1,4 @@
+import SweetArray from "../wrappers/array"
 import SweetString from "../wrappers/string"
 
 const string = new SweetString("abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘")
@@ -5,14 +6,8 @@ const string = new SweetString("abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯�
 test("SweetString.append('abc') instance check", () => {
 	expect(string.append("abc")).toBeInstanceOf(SweetString)
 })
-test("SweetString.append() instance check", () => {
-	expect(string.append()).toBeInstanceOf(SweetString)
-})
-test("SweetString.append(string) instance check", () => {
+test("SweetString.append(new SweetString('abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘')) instance check", () => {
 	expect(string.append(string)).toBeInstanceOf(SweetString)
-})
-test("SweetString.append(void 0) throw check", () => {
-	expect(() => string.append(void 0)).toThrow()
 })
 test("SweetString.append('abc') value check", () => {
 	expect(string.append("abc").unwrap()).toStrictEqual("abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘abc")
@@ -27,6 +22,12 @@ test("SweetString.append(new SweetString('abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙�
 	expect(string.append(string).unwrap()).toStrictEqual(
 		"abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘",
 	)
+})
+test("SweetString.append(void 0) throw check", () => {
+	expect(() => string.append(void 0)).toThrow()
+})
+test("SweetString.append() throw check", () => {
+	expect(() => string.append()).toThrow()
 })
 
 test("SweetString.convertCodepointIndexToLogicalIndex() value check", () => {
@@ -200,4 +201,93 @@ test("SweetString.lastIndexOf('hola') value check", () => {
 })
 test("SweetString.lastIndexOf(void 0) throw check", () => {
 	expect(() => string.lastIndexOf(void 0)).toThrow()
+})
+
+test("SweetString.prepend('abc') instance check", () => {
+	expect(string.prepend("abc")).toBeInstanceOf(SweetString)
+})
+test("SweetString.prepend(new SweetString('abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘')) instance check", () => {
+	expect(string.prepend(string)).toBeInstanceOf(SweetString)
+})
+test("SweetString.prepend('abc') value check", () => {
+	expect(string.prepend("abc").unwrap()).toStrictEqual("abcabcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘")
+})
+test("SweetString.prepend('🦄💕') value check", () => {
+	expect(string.prepend("🦄💕").unwrap()).toStrictEqual("🦄💕abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘")
+})
+test("SweetString.prepend('佫𩷶') value check", () => {
+	expect(string.prepend("佫𩷶").unwrap()).toStrictEqual("佫𩷶abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘")
+})
+test("SweetString.prepend(new SweetString('abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘')) value check", () => {
+	expect(string.prepend(string).unwrap()).toStrictEqual(
+		"abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘",
+	)
+})
+test("SweetString.prepend(void 0) throw check", () => {
+	expect(() => string.prepend(void 0)).toThrow()
+})
+test("SweetString.prepend() throw check", () => {
+	expect(() => string.prepend()).toThrow()
+})
+
+test("SweetString.startsWith('a') value check", () => {
+	expect(string.startsWith("a")).toStrictEqual(true)
+})
+test("SweetString.startsWith('abc') value check", () => {
+	expect(string.startsWith("abc")).toStrictEqual(true)
+})
+test("SweetString.startsWith('🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘') value check", () => {
+	expect(string.startsWith("🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘")).toStrictEqual(false)
+})
+test("SweetString.startsWith('test') value check", () => {
+	expect(string.startsWith("test")).toStrictEqual(false)
+})
+test("SweetString.startsWith(new SweetString('abcdef 🦄💕 Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘')) value check", () => {
+	expect(string.startsWith(string)).toStrictEqual(true)
+})
+test("SweetString.startsWith(void 0) throw check", () => {
+	expect(() => string.startsWith(void 0)).toThrow()
+})
+
+test("SweetString.toArray() instance check", () => {
+	expect(string.toArray()).toBeInstanceOf(Array)
+})
+test("SweetString.toArray() value check", () => {
+	expect(string.toArray().length).toStrictEqual(string.length)
+})
+
+test("SweetString.toSweetArray() instance check", () => {
+	expect(string.toSweetArray()).toBeInstanceOf(SweetArray)
+})
+test("SweetString.toSweetArray() value check", () => {
+	expect(string.toSweetArray().length).toStrictEqual(string.length)
+})
+
+test("SweetString.toSweetStringArray() instance check", () => {
+	expect(string.toSweetStringArray()).toBeInstanceOf(Array)
+})
+test("SweetString.toSweetStringArray() value check", () => {
+	expect(string.toSweetStringArray().length).toStrictEqual(string.length)
+})
+test("SweetString.toSweetStringArray().at(0) value check", () => {
+	expect(string.toSweetStringArray().at(0)).toBeInstanceOf(SweetString)
+})
+
+test("SweetString.toSweetStringSweetArray() instance check", () => {
+	expect(string.toSweetStringSweetArray()).toBeInstanceOf(SweetArray)
+})
+test("SweetString.toSweetStringSweetArray() value check", () => {
+	expect(string.toSweetStringSweetArray().length).toStrictEqual(string.length)
+})
+test("SweetString.toSweetStringSweetArray().getItem(0) value check", () => {
+	expect(string.toSweetStringSweetArray().getItem(0)).toBeInstanceOf(
+		SweetString,
+	)
+})
+
+test("SweetString.unwrap() value check", () => {
+	expect(typeof string.unwrap()).toStrictEqual("string")
+})
+test("SweetString.valueOf() value check", () => {
+	expect(typeof string.valueOf()).toStrictEqual("string")
 })
