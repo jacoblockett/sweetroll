@@ -7,17 +7,17 @@ class SweetString {
 	#self
 
 	/**
-	 * Creates a SweetString - a String with extra umph.
+	 * Creates a SweetString - a string with extra umph.
 	 *
 	 * SweetStrings will always re-index a given string so that characters outside of the
 	 * Basic Multilingual Plane are handled intuitively and interaction with lone surrogates
 	 * are kept to a minimum. i.e.
 	 *
-	 * `new SweetString("💩🦄🍦").length // => 3`
+	 * `new SweetString("💩🦄🍦").length // => 3 (not 6)`
 	 *
-	 * `new SweetString("💩🦄🍦").getChar(1) // => 🦄`
+	 * `new SweetString("💩🦄🍦").getChar(1) // => 🦄 (not 💩's sibling surrogate, �)`
 	 *
-	 * @param {String|SweetString} string The string or SweetString to load
+	 * @param {string|SweetString} string The string or SweetString to load
 	 * @returns {SweetString}
 	 */
 	constructor(string = "") {
@@ -36,8 +36,8 @@ class SweetString {
 	/**
 	 * Joins the given string array into a string literal.
 	 *
-	 * @param {Array<String>} [stringArray]
-	 * @returns {String}
+	 * @param {string[]} [stringArray]
+	 * @returns {string}
 	 */
 	#join(stringArray = this.#self) {
 		let string = ""
@@ -55,8 +55,8 @@ class SweetString {
 	 * - Note: Throws the error message if not a string/SweetString.
 	 *
 	 * @param {any} string The argument to check
-	 * @param {String} [errorMsg] The error message to throw if not a string or SweetString
-	 * @returns {Array<[string: String, length: Number, indexedString: string[]]>}
+	 * @param {string} [errorMsg] The error message to throw if not a string or SweetString
+	 * @returns {[OriginalString: string, NormalizedStringLength: number, CharArray: string[]]}
 	 */
 	#parseStringArgument(string, errorMsg = `Expected a string or SweetString`) {
 		if (isString(string)) {
@@ -82,7 +82,7 @@ class SweetString {
 	/**
 	 * Retrieves the length of the SweetString.
 	 *
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get length() {
 		return this.#self.length
@@ -91,7 +91,7 @@ class SweetString {
 	/**
 	 * Appends strings or SweetStrings to the end of the SweetString.
 	 *
-	 * @param {...SweetString|String} strings The strings to append
+	 * @param {...SweetString|string} strings The strings to append
 	 * @returns {SweetString}
 	 */
 	append(...strings) {
@@ -150,8 +150,8 @@ class SweetString {
 	/**
 	 * Checks if the provided string or SweetString exists at the end of the SweetString.
 	 *
-	 * @param {String|SweetString} string The string to check for existence
-	 * @returns {Boolean}
+	 * @param {string|SweetString} string The string to check for existence
+	 * @returns {boolean}
 	 */
 	endsWith(string) {
 		const [str, strLen] = this.#parseStringArgument(string)
@@ -169,8 +169,8 @@ class SweetString {
 	/**
 	 * Finds the first index of the given substring.
 	 *
-	 * @param {String|SweetString} substring The substring to find the index of
-	 * @returns {Number|undefined}
+	 * @param {string|SweetString} substring The substring to find the index of
+	 * @returns {number|undefined}
 	 */
 	firstIndexOf(substring) {
 		const [str, strLen] = this.#parseStringArgument(substring)
@@ -200,7 +200,7 @@ class SweetString {
 	 * Gets the character at the given index. If the index is negative, this function will count
 	 * backwards from the end of the SweetString instead.
 	 *
-	 * @param {Number} index The index of the character to get
+	 * @param {number} index The index of the character to get
 	 * @returns {SweetString|undefined}
 	 */
 	getChar(index) {
@@ -223,8 +223,8 @@ class SweetString {
 	 * Gets the character codepoint(s) at the given index. If the index is negative, this
 	 * function will count backwards from the end of the SweetString instead.
 	 *
-	 * @param {Number} index The index of the character to convert to a codepoint array
-	 * @returns {Number[]|undefined}
+	 * @param {number} index The index of the character to convert to a codepoint array
+	 * @returns {number[]|undefined}
 	 */
 	getCharCodes(index) {
 		if (!isNumber(index)) {
@@ -251,8 +251,8 @@ class SweetString {
 	/**
 	 * Checks if the given character exists within the SweetString.
 	 *
-	 * @param {String|SweetString} character The character to check for existence
-	 * @returns {Boolean}
+	 * @param {string|SweetString} character The character to check for existence
+	 * @returns {boolean}
 	 */
 	hasChar(character) {
 		const [char] = this.#parseStringArgument(character)
@@ -273,8 +273,8 @@ class SweetString {
 	 * teeny eensy weensy itty bitty performance gain using that method for single characters, but
 	 * probably not.
 	 *
-	 * @param {String|SweetString} substring The substring to check for existence
-	 * @returns {Boolean}
+	 * @param {string|SweetString} substring The substring to check for existence
+	 * @returns {boolean}
 	 */
 	hasSubstring(substring) {
 		const [str, strLen] = this.#parseStringArgument(substring)
@@ -305,7 +305,7 @@ class SweetString {
 	 * but in order to return true, value will need to be a string or SweetString of course.
 	 *
 	 * @param {any} value The comparison value to check the SweetString against
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	isSubstringOf(value) {
 		if (!isString(value) && !(value instanceof SweetString)) {
@@ -322,8 +322,8 @@ class SweetString {
 	/**
 	 * Finds the last index of the given substring.
 	 *
-	 * @param {String|SweetString} substring The substring to find the index of
-	 * @returns {Number|undefined}
+	 * @param {string|SweetString} substring The substring to find the index of
+	 * @returns {number|undefined}
 	 */
 	lastIndexOf(substring) {
 		const string = new SweetString(substring)
@@ -370,7 +370,7 @@ class SweetString {
 	/**
 	 * Prepends strings or SweetStrings to the beginning of the SweetString.
 	 *
-	 * @param {...SweetString|String} strings The strings to prepend
+	 * @param {...SweetString|string} strings The strings to prepend
 	 * @returns {SweetString}
 	 */
 	prepend(...strings) {
@@ -402,8 +402,8 @@ class SweetString {
 	/**
 	 * Checks if the provided string or SweetString exists at the beginning of the SweetString.
 	 *
-	 * @param {String} string The string to check for existence
-	 * @returns {Boolean}
+	 * @param {string} string The string to check for existence
+	 * @returns {boolean}
 	 */
 	startsWith(string) {
 		const [str, strLen] = this.#parseStringArgument(string)
@@ -453,7 +453,7 @@ class SweetString {
 	/**
 	 * Returns the underlying data being operated on.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	unwrap() {
 		return this.#join()
