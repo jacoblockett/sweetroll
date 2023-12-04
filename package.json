@@ -9,12 +9,15 @@
 		"url": "https://github.com/jacoblockett/sweetroll"
 	},
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "clear && node --experimental-vm-modules node_modules/jest/bin/jest.js",
 		"sandbox": "clear && nodemon --quiet sandbox.js"
 	},
 	"author": "Jacob Lockett",
 	"license": "ISC",
 	"dependencies": {
 		"msgpackr": "^1.9.9"
+	},
+	"devDependencies": {
+		"jest": "^29.7.0"
 	}
 }
