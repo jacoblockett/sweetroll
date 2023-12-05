@@ -1102,7 +1102,7 @@ class SweetArray {
 	/**
 	 * Removes the specified datatypes from the SweetArray.
 	 *
-	 * @param  {...string} datatypes The datatypes to remove
+	 * @param  {...("string"|"number"|"boolean"|"function"|"symbol"|"bigint"|"map"|"set"|"weakmap"|"weakset"|"array"|"object"|"array iterator"|"promise"|"undefined"|"null")} datatypes The datatypes to remove
 	 * @returns {SweetArray}
 	 */
 	removeType(...datatypes) {
