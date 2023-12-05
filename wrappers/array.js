@@ -194,6 +194,8 @@ class SweetArray {
 	/**
 	 * Attempts to coerce a given input into a SweetArray.
 	 *
+	 * TODO: add a reference to docs detailing behavior thoroughly
+	 *
 	 * @param {any} input The value to coerce into a SweetArray
 	 * @param {StaticFromCallback} [callback] A mapping callback to iterate over the SweetArray during creation
 	 * @returns {SweetArray}
