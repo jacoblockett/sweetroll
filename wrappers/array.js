@@ -291,7 +291,7 @@ class SweetArray {
 	/**
 	 * Concatenates the SweetArray with the passed in SweetArray(s) or array(s).
 	 *
-	 * @param {...SweetArray|any[]} arrays The arrays to append
+	 * @param {...SweetArray|any} arrays The arrays to append
 	 * @returns {SweetArray}
 	 */
 	concat(...arrays) {
