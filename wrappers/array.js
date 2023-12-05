@@ -24,15 +24,15 @@ import {
 } from "../utils/arrayFrom.js"
 import createLookupMap from "../utils/createLookupMap.js"
 import serialize from "../utils/serialize.js"
-import PNPString from "./string.js"
-import PNPObject from "./object.js"
+import SweetString from "./string.js"
+import SweetObject from "./object.js"
 
 /**
  * Callback function used with the static from method on the SweetArray wrapper.
  *
  * @callback StaticFromCallback
  * @param {any} item The current item
- * @param {Number} index The index of the current item
+ * @param {number} index The index of the current item
  * @returns {any}
  */
 
@@ -45,7 +45,7 @@ import PNPObject from "./object.js"
  * - Note: This breakout function is unavailable on validation loop methods (every, some, etc.)
  *
  * @callback BreakoutFunction
- * @param {Boolean} destructive If `true`, will destroy the remaining items to be processed, returning only
+ * @param {boolean} destructive If `true`, will destroy the remaining items to be processed, returning only
  * the already-processed SweetArray. If `false` (default), will concatenate the remaining items to be processed onto
  * the already-processed SweetArray.
  * @returns {Void}
@@ -64,7 +64,7 @@ import PNPObject from "./object.js"
  *
  * @callback LoopCallback
  * @param {any} item The current item
- * @param {Number} index The index of the current item
+ * @param {number} index The index of the current item
  * @param {LoopProperties} props
  * @returns {any}
  */
@@ -75,7 +75,7 @@ import PNPObject from "./object.js"
  * @callback ReduceCallback
  * @param {any} accumulator The current accumulator, or what was returned from the previous iteration
  * @param {any} item The current item
- * @param {Number} index The index of the current item
+ * @param {number} index The index of the current item
  * @param {LoopProperties} props
  * @returns {any}
  */
@@ -85,7 +85,7 @@ import PNPObject from "./object.js"
  *
  * @callback ValidationCallback
  * @param {any} item The current item
- * @param {Number} index The index of the current item
+ * @param {number} index The index of the current item
  * @param {LoopProperties} props
  */
 
@@ -96,13 +96,13 @@ class SweetArray {
 	#loopBreakoutDestructiveFlag = false
 
 	/**
-	 * Creates a SweetArray - an Array with extra umph.
+	 * Creates a SweetArray - an any[] with extra umph.
 	 *
 	 * SweetArray methods will never affect the original array. Instead, they will always
 	 * return an instance of a SweetArray, either the original or a copy, where applicable.
 	 * This allows for a pleasant, user-friendly, chainable method experience.
 	 *
-	 * @param {Array} [array] The array to initialize the SweetArray with (default = `any[]`)
+	 * @param {any[]} [array] The array to initialize the SweetArray with (default = `any[]`)
 	 * @param {Object} [options] An options object
 	 * @returns {SweetArray}
 	 */
@@ -139,7 +139,7 @@ class SweetArray {
 	/**
 	 * Sets the breakout flags according to user logic.
 	 *
-	 * @param {Boolean} [destructive] Sets the destructive flag when truthy
+	 * @param {boolean} [destructive] Sets the destructive flag when truthy
 	 */
 	#startBreakout(destructive) {
 		if (destructive) {
@@ -154,8 +154,8 @@ class SweetArray {
 	 * stick some commas with no spaces in there, and remove any bracket notation that would
 	 * be helpful in datatype discernment" bullshit.
 	 *
-	 * @param {Array} array
-	 * @returns {String}
+	 * @param {any[]} array
+	 * @returns {string}
 	 */
 	#toStringHelper(array = this.#self) {
 		const newArray = []
@@ -205,8 +205,8 @@ class SweetArray {
 		}
 		if (
 			input instanceof SweetArray ||
-			input instanceof PNPString ||
-			input instanceof PNPObject
+			input instanceof SweetString ||
+			input instanceof SweetObject
 		) {
 			input = input.unwrap()
 		}
@@ -257,7 +257,7 @@ class SweetArray {
 	/**
 	 * Retrieves the length of the SweetArray.
 	 *
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	get length() {
 		return this.#self.length
@@ -289,7 +289,7 @@ class SweetArray {
 	/**
 	 * Concatenates the SweetArray with the passed in SweetArray(s) or array(s).
 	 *
-	 * @param {...SweetArray|Array} arrays The arrays to append
+	 * @param {...SweetArray|any[]} arrays The arrays to append
 	 * @returns {SweetArray}
 	 */
 	concat(...arrays) {
@@ -330,7 +330,7 @@ class SweetArray {
 	 * function. For a test to pass, the callback function must return a truthy value.
 	 *
 	 * @param {ValidationCallback} callback The callback function to run on each iteration
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	every(callback) {
 		for (let i = 0; i < this.#self.length; i++) {
@@ -430,7 +430,7 @@ class SweetArray {
 	 * Finds the first index of the given item. Can find the index of non-primitives as well.
 	 *
 	 * @param {any} item The item to find the index of
-	 * @returns {Number|undefined}
+	 * @returns {number|undefined}
 	 */
 	firstIndexOf(item) {
 		if (isPrimitive(item)) {
@@ -449,8 +449,8 @@ class SweetArray {
 	 * Flattens an array based on the passed in depth.
 	 *
 	 * @param {Object} [options]
-	 * @param {Number} [options.depth] The depth to flatten by (default = `1`)
-	 * @param {Boolean} [options.I_KNOW_WHAT_IM_DOING] Setting this to true will disable thrown warnings about potential memory/call stack issues with large depth numbers or arrays
+	 * @param {number} [options.depth] The depth to flatten by (default = `1`)
+	 * @param {boolean} [options.I_KNOW_WHAT_IM_DOING] Setting this to true will disable thrown warnings about potential memory/call stack issues with large depth numbers or arrays
 	 * @returns {SweetArray}
 	 */
 	flatten(options) {
@@ -564,7 +564,7 @@ class SweetArray {
 	 * Retrieves the first number of items within the SweetArray specified by the number you
 	 * pass in.
 	 *
-	 * @param {Number} [numberOfItems] The number of items you want returned (default = `1`)
+	 * @param {number} [numberOfItems] The number of items you want returned (default = `1`)
 	 * @returns {SweetArray}
 	 */
 	getFirst(numberOfItems) {
@@ -583,7 +583,7 @@ class SweetArray {
 	 * Returns the first item from the SweetArray in which the provided callback returns a truthy value.
 	 *
 	 * @param {ValidationCallback} callback The callback function to run on each iteration
-	 * @returns {Array<[item: any, index: Number]>|undefined}
+	 * @returns {[item: any, index: number]|undefined}
 	 */
 	getFirstMatch(callback) {
 		if (!isFunction(callback)) return undefined
@@ -603,7 +603,7 @@ class SweetArray {
 	 * backwards from the end of the SweetArray instead. Will return undefined if the index
 	 * is out of range.
 	 *
-	 * @param {Number} index The index of the item to get
+	 * @param {number} index The index of the item to get
 	 * @returns {any}
 	 */
 	getItem(index) {
@@ -622,7 +622,7 @@ class SweetArray {
 	 * Retrieves the last number of items within the SweetArray specified by the number you
 	 * pass in.
 	 *
-	 * @param {Number} [numberOfItems] The number of items you want returned (default = `1`)
+	 * @param {number} [numberOfItems] The number of items you want returned (default = `1`)
 	 * @returns {SweetArray}
 	 */
 	getLast(numberOfItems) {
@@ -641,7 +641,7 @@ class SweetArray {
 	 * Returns the last item from the SweetArray in which the provided callback returns a truthy value.
 	 *
 	 * @param {ValidationCallback} callback The callback function to run on each iteration
-	 * @returns {Array<[item: any, index: Number]>|undefined}
+	 * @returns {[item: any, index: number]|undefined}
 	 */
 	getLastMatch(callback) {
 		if (!isFunction(callback)) return undefined
@@ -665,7 +665,7 @@ class SweetArray {
 	 * `"AND"`.
 	 *
 	 * @param  {...any} items The items to check against the SweetArray
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 */
 	hasItem(...items) {
 		if (!items.length) {
@@ -706,7 +706,7 @@ class SweetArray {
 	/**
 	 * Inserts the given items directly after the given fromIndex.
 	 *
-	 * @param {Number} fromIndex The index where you want to start inserting (exclusive)
+	 * @param {number} fromIndex The index where you want to start inserting (exclusive)
 	 * @param  {...any} items The items to insert
 	 */
 	insert(fromIndex, ...items) {
@@ -731,8 +731,8 @@ class SweetArray {
 	 * Joins the elements within the SweetArray into a string value, inserting the string value
 	 * between each of the elements.
 	 *
-	 * @param {String} [string] The string to join the array with (default = `""`)
-	 * @returns {String}
+	 * @param {string} [string] The string to join the array with (default = `""`)
+	 * @returns {string}
 	 */
 	join(string) {
 		if (!isString(string)) {
@@ -746,7 +746,7 @@ class SweetArray {
 	 * Finds the last index of the given item. Can find the index of non-primitives as well.
 	 *
 	 * @param {any} item The item to find the index of
-	 * @returns {Number|undefined}
+	 * @returns {number|undefined}
 	 */
 	lastIndexOf(item) {
 		if (isPrimitive(item)) {
@@ -991,7 +991,7 @@ class SweetArray {
 	/**
 	 * Removes the specified number of items from the end of the SweetArray.
 	 *
-	 * @param {Number} [numberOfItems] The number of items to remove, or "pop", from the
+	 * @param {number} [numberOfItems] The number of items to remove, or "pop", from the
 	 * end of the SweetArray (default = `1`)
 	 * @returns {SweetArray}
 	 */
@@ -1011,7 +1011,7 @@ class SweetArray {
 	/**
 	 * Removes the specified number of items from the beginning of the SweetArray.
 	 *
-	 * @param {Number} [numberOfItems] The number of items to remove, or "shift", from
+	 * @param {number} [numberOfItems] The number of items to remove, or "shift", from
 	 * the beginning of the SweetArray (default = `1`)
 	 * @returns {SweetArray}
 	 */
@@ -1031,7 +1031,7 @@ class SweetArray {
 	/**
 	 * Removes the specified items from the SweetArray.
 	 *
-	 * @param  {...String} items The items to remove
+	 * @param  {...any} items The items to remove
 	 * @returns {SweetArray}
 	 */
 	removeItem(...items) {
@@ -1058,7 +1058,7 @@ class SweetArray {
 	 * Removes all of the items the arrays have in common and returns the items that were
 	 * unique among each array.
 	 *
-	 * @param {...Array} arrays The comparison arrays. Can be any array literals or SweetArrays
+	 * @param {...any[]} arrays The comparison arrays. Can be any array literals or SweetArrays
 	 * @returns {SweetArray}
 	 */
 	removeSharedItems(...arrays) {
@@ -1102,7 +1102,7 @@ class SweetArray {
 	/**
 	 * Removes the specified datatypes from the SweetArray.
 	 *
-	 * @param  {...String} datatypes The datatypes to remove
+	 * @param  {...string} datatypes The datatypes to remove
 	 * @returns {SweetArray}
 	 */
 	removeType(...datatypes) {
@@ -1130,7 +1130,7 @@ class SweetArray {
 	 * Removes all of the items unique to both arrays and returns the items that were
 	 * shared among each array.
 	 *
-	 * @param {...Array} arrays The comparison arrays. Can be any array literals or SweetArrays
+	 * @param {...any[]} arrays The comparison arrays. Can be any array literals or SweetArrays
 	 * @returns {SweetArray}
 	 */
 	removeUniqueItems(...arrays) {
@@ -1165,7 +1165,7 @@ class SweetArray {
 	/**
 	 * Replaces items starting at the fromIndex.
 	 *
-	 * @param {Number} fromIndex The index where you want to start replacing (inclusive)
+	 * @param {number} fromIndex The index where you want to start replacing (inclusive)
 	 * @param {...any} items The items to use as a replacement for items starting at fromIndex
 	 * @returns {SweetArray}
 	 */
@@ -1199,8 +1199,8 @@ class SweetArray {
 	 * provided callback function. For a test to pass, the callback function must return a truthy value.
 	 *
 	 * @param {ValidationCallback} callback The callback function to run on each iteration
-	 * @param {Number} [minimum] The minimum number of passes needed for some to return true (default = `1`)
-	 * @returns {Boolean}
+	 * @param {number} [minimum] The minimum number of passes needed for some to return true (default = `1`)
+	 * @returns {boolean}
 	 */
 	some(callback, minimum) {
 		if (!isNumber(minimum)) {
@@ -1228,11 +1228,10 @@ class SweetArray {
 	 * - Note: this method, aside from the convenient string method names, strictly follows the
 	 * native `.sort()` function found on native arrays.
 	 *
-	 * @see {} TODO: LINK TO THE MOZILLA MDN PAGE FOR THE NATIVE SORT METHOD
-	 * @see {} TODO: PUT LINK HERE TO THE OTHER METHOD SUPPORT LIST WHEN IT IS CREATED
+	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort Array.prototype.sort on MDN}
 	 *
-	 * @param {Function|String} [method] Either a callback function used for item comparison
-	 * or a string representing a commonly used sort method
+	 * @param {function|SortString<"asc"|"desc"|"lenAsc"|"lenDesc"|"dateAsc"|"dateDesc"|"alphanumAsc"|"alphanumDesc">} [method] Either a callback
+	 * function used for item comparison or a string representing a commonly used sort method
 	 * @returns {SweetArray}
 	 */
 	sort(method) {
@@ -1250,12 +1249,12 @@ class SweetArray {
 				lenDesc: (a, b) => b.length - a.length,
 				dateAsc: (a, b) => a.getTime() - b.getTime(),
 				dateDesc: (a, b) => b.getTime() - a.getTime(),
-				alphanumericAsc: (a, b) =>
+				alphanumAsc: (a, b) =>
 					a.toString().localeCompare(b.toString(), undefined, {
 						numeric: true,
 						sensitivity: "base",
 					}),
-				alphanumericDesc: (a, b) =>
+				alphanumDesc: (a, b) =>
 					b.toString().localeCompare(a.toString(), undefined, {
 						numeric: true,
 						sensitivity: "base",
@@ -1279,7 +1278,7 @@ class SweetArray {
 	/**
 	 * Converts the SweetArray into a JSON serialized string.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toJSON() {
 		return JSON.stringify(this.#self)
@@ -1304,7 +1303,7 @@ class SweetArray {
 	 * Converts the SweetArray into an object, mapping indices as keys and items as values to
 	 * those keys.
 	 *
-	 * @returns {Record<Number, any>}
+	 * @returns {Record<number, any>}
 	 */
 	toObject() {
 		// Object.assign must be doing some magic under the hood because a simple for loop
@@ -1330,7 +1329,7 @@ class SweetArray {
 	/**
 	 * Returns a string representation of the SweetArray
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toString() {
 		// recursively convert all items to a string
@@ -1351,7 +1350,7 @@ class SweetArray {
 	/**
 	 * Returns the underlying data being operated on.
 	 *
-	 * @returns {Array}
+	 * @returns {any[]}
 	 */
 	unwrap() {
 		return this.#self
