@@ -324,7 +324,7 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	copy() {
-		return this.#self.slice(0)
+		return SweetArray.from(this.#self)
 	}
 
 	/**
