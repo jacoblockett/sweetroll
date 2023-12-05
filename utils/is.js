@@ -8,7 +8,7 @@ const isFloat = value => {
 }
 const isFunction = value => typeof value === "function"
 const isMap = value => value instanceof Map
-const isNumber = value => typeof value === "number"
+const isNumber = value => typeof value === "number" && !isNaN(value)
 const isNumeric = (value, noFloat = false) => {
 	if (noFloat) {
 		if (typeof value === "number" && value % 1 === 0) return true
@@ -26,6 +26,8 @@ const isPrimitive = value =>
 	value === null || (typeof value !== "object" && typeof value !== "function")
 const isSet = value => value instanceof Set
 const isString = value => typeof value === "string"
+const isIterableIterator = value =>
+	Object.prototype.toString.call(value) === "[object Array Iterator]"
 
 export {
 	isArray,
