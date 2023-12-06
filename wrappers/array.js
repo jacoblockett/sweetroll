@@ -456,38 +456,38 @@ class SweetArray {
 	/**
 	 * Flattens an array based on the passed in depth.
 	 *
-	 * @param {Object} [options]
-	 * @param {number} [options.depth] The depth to flatten by (default = `1`)
-	 * @param {boolean} [options.I_KNOW_WHAT_IM_DOING] Setting this to true will disable thrown warnings about potential memory/call stack issues with large depth numbers or arrays
+	 * - Pass in `Infinity` to depth argument to recursively flatten the array to the maximum depth.
+	 *
+	 * - Depths of 100 or more must have the `I_KNOW_WHAT_IM_DOING` argument set to `true`.
+	 * - Arrays with 10000 or more items must have the `I_KNOW_WHAT_IM_DOING` argument set to `true`.
+	 *
+	 * The `I_KNOW_WHAT_IM_DOING` argument is here as a check against potentially performance-busting operations
+	 * that you might not be aware exists, especially if working with arrays from arbitray sources. This is a
+	 * minor inconvenience for a bit of extra performance security.
+	 *
+	 * @param {number} [depth] The depth to flatten by (default = `1`)
+	 * @param {boolean} [I_KNOW_WHAT_IM_DOING] Setting this to true will disable thrown warnings about potential memory/call stack issues with large depth numbers or arrays
 	 * @returns {SweetArray}
 	 */
-	flatten(options) {
-		if (!isObject(options)) {
-			options = {
-				depth: 1,
-				I_KNOW_WHAT_IM_DOING: false,
-			}
-		}
+	flatten(depth = 1, I_KNOW_WHAT_IM_DOING = false) {
+		if (!isNumber(depth)) depth = 1
+		if (!isBoolean(I_KNOW_WHAT_IM_DOING)) I_KNOW_WHAT_IM_DOING = false
 
-		if (!isNumber(options.depth)) options.depth = 1
-		if (!isBoolean(options.I_KNOW_WHAT_IM_DOING))
-			options.I_KNOW_WHAT_IM_DOING = false
-
-		if (!options.I_KNOW_WHAT_IM_DOING && options.depth >= 100) {
+		if (!I_KNOW_WHAT_IM_DOING && depth >= 100) {
 			throw new Error(
-				`Man, that number is deeeeeeeeep. This might seem desirable, but there are potential concerns about reaching maximum call stack size and memory limits if a depth this large is passed (and warranted for that matter). If you're unconcerned with this and have faith in that beautiful machine of yours, you can disable this "warning" by passing "I_KNOW_WHAT_IM_DOING" to the options object and setting it to true.`,
+				`Man, that number is deeeeeeeeep. This might seem desirable, but there are potential concerns about reaching maximum call stack size and memory limits if a depth this large is passed (and warranted for that matter). If you're unconcerned with this and have faith in that beautiful machine of yours, you can disable this "warning" by passing true to the I_KNOW_WHAT_IM_DOING argument, i.e. .flatten(${depth}, true).`,
 			)
 		}
 
-		if (!options.I_KNOW_WHAT_IM_DOING && this.#self.length >= 10000) {
+		if (!I_KNOW_WHAT_IM_DOING && this.#self.length >= 10000) {
 			throw new Error(
 				`Whoa Nelly! This array you have here is quite the specimen! There are potential concerns about reaching maximum call stack size and memory limits with an array of this size (size=${
 					this.#self.length
-				}). If you're unconcerned with this and have faith in that beautiful machine of yours, you can disable this "warning" by passing "I_KNOW_WHAT_IM_DOING" to the options object and setting it to true.`,
+				}). If you're unconcerned with this and have faith in that beautiful machine of yours, you can disable this "warning" by passing true to the I_KNOW_WHAT_IM_DOING argument, i.e. .flatten(${depth}, true).`,
 			)
 		}
 
-		return new SweetArray(this.#self.flat(options.depth))
+		return new SweetArray(this.#self.flat(depth))
 	}
 
 	/**
