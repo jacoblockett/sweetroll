@@ -1,4 +1,4 @@
-import { INVISIBLE_CHARACTER } from "../utils/constants.js"
+import { INVISIBLE_CHARACTER, BREAKOUT } from "../utils/constants.js"
 import {
 	isArray,
 	isBoolean,
@@ -92,8 +92,6 @@ import SweetObject from "./object.js"
 class SweetArray {
 	#self
 	#lookup
-	#loopBreakoutFlag = false
-	#loopBreakoutDestructiveFlag = false
 
 	/**
 	 * Creates a SweetArray - an any[] with extra umph.
@@ -129,24 +127,20 @@ class SweetArray {
 	}
 
 	/**
-	 * Ends the breakout be resetting all breakout flags to false
-	 */
-	#endBreakout() {
-		this.#loopBreakoutFlag = false
-		this.#loopBreakoutDestructiveFlag = false
-	}
-
-	/**
-	 * Sets the breakout flags according to user logic.
+	 * Breaks out of a loop immediately by throwing an error. Errors thrown will have the message described by
+	 * the `BREAKOUT` constant, and the error object will have a key `.DESTRUCTIVE` representing if the remaining
+	 * items to be processed should be destroyed.
 	 *
-	 * @param {boolean} [destructive] Sets the destructive flag when truthy
+	 * @param {boolean} destructive Describes if the breakout should destroy the remaining items to be processed (default = `false`)
 	 */
-	#startBreakout(destructive) {
-		if (destructive) {
-			this.#loopBreakoutDestructiveFlag = true
+	#breakout(destructive) {
+		const err = new Error(BREAKOUT)
+
+		if (destructive === true) {
+			err.DESTRUCTIVE = true
 		}
 
-		this.#loopBreakoutFlag = true
+		throw err
 	}
 
 	/**
@@ -297,9 +291,7 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	concat(...arrays) {
-		if (arrays.length === 0) {
-			return this
-		}
+		if (arrays.length === 0) return this
 
 		let newArray = this.#self
 
@@ -359,31 +351,30 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	filter(callback) {
-		if (!isFunction(callback)) {
-			return this
-		}
+		if (!isFunction(callback)) return this
 
 		const array = []
 
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			const bool = !!callback(item, i, {
-				self: this,
-				breakout: this.#startBreakout.bind(this),
-			})
+			let bool
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				if (this.#loopBreakoutDestructiveFlag) {
-					this.#endBreakout()
-					break
+			try {
+				bool = !!callback(item, i, {
+					self: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					if (error.DESTRUCTIVE === true) {
+						break
+					}
+
+					const remainingItems = this.#self.slice(i)
+					return new SweetArray(array.concat(remainingItems))
+				} else {
+					throw error
 				}
-
-				this.#endBreakout()
-
-				const remainingItems = this.#self.slice(i)
-				return new SweetArray(array.concat(remainingItems))
 			}
 
 			if (bool) array[array.length] = item
@@ -401,31 +392,30 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	filterRight(callback) {
-		if (!isFunction(callback)) {
-			return this
-		}
+		if (!isFunction(callback)) return this
 
 		const array = []
 
 		for (let i = this.#self.length - 1; i >= 0; i--) {
 			const item = this.#self[i]
-			const bool = !!callback(item, i, {
-				self: this,
-				breakout: this.#startBreakout.bind(this),
-			})
+			let bool
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				if (this.#loopBreakoutDestructiveFlag) {
-					this.#endBreakout()
-					break
+			try {
+				bool = !!callback(item, i, {
+					self: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					if (error.DESTRUCTIVE === true) {
+						break
+					}
+
+					const remainingItems = this.#self.slice(0, i + 1)
+					return new SweetArray(remainingItems.concat(array))
+				} else {
+					throw error
 				}
-
-				this.#endBreakout()
-
-				const remainingItems = this.#self.slice(0, i + 1)
-				return new SweetArray(remainingItems.concat(array))
 			}
 
 			if (bool) array.unshift(item)
@@ -494,10 +484,6 @@ class SweetArray {
 	 * Loops over each item in the SweetArray, executing the provided callback function for each
 	 * iteration.
 	 *
-	 * - Return note: There was a conscious decision to return the array object to allow for
-	 * chaining methods. `forEach` being unchainable, while `map`, etc. were, always seemed a bit
-	 * inconsistent in native implementations.
-	 *
 	 * - Breakout note: The breakout function, regardless of the options argument passed in, will
 	 * not affect the array returned. This function will always return the original array, unaffected.
 	 * This is a logical side-effect of the forEach loop not manipulating the underlying array.
@@ -506,23 +492,22 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	forEach(callback) {
-		if (!isFunction(callback)) {
-			return this
-		}
+		if (!isFunction(callback)) return this
 
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			callback(item, i, {
-				self: this,
-				breakout: this.#startBreakout.bind(this),
-			})
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				this.#endBreakout()
-
-				return this
+			try {
+				callback(item, i, {
+					self: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					return this
+				} else {
+					throw error
+				}
 			}
 		}
 
@@ -545,23 +530,22 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	forEachRight(callback) {
-		if (!isFunction(callback)) {
-			return this
-		}
+		if (!isFunction(callback)) return this
 
 		for (let i = this.#self.length - 1; i >= 0; i--) {
 			const item = this.#self[i]
-			callback(item, i, {
-				self: this,
-				breakout: this.#startBreakout.bind(this),
-			})
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				this.#endBreakout()
-
-				return this
+			try {
+				callback(item, i, {
+					self: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					return this
+				} else {
+					throw error
+				}
 			}
 		}
 
@@ -580,9 +564,7 @@ class SweetArray {
 			numberOfItems = 1
 		}
 
-		if (!this.#self.length || numberOfItems >= this.#self.length) {
-			return this
-		}
+		if (!this.#self.length || numberOfItems >= this.#self.length) return this
 
 		return new SweetArray(this.#self.slice(0, numberOfItems))
 	}
@@ -638,9 +620,7 @@ class SweetArray {
 			numberOfItems = 1
 		}
 
-		if (!this.#self.length || numberOfItems >= this.#self.length) {
-			return this
-		}
+		if (!this.#self.length || numberOfItems >= this.#self.length) return this
 
 		return new SweetArray(this.#self.slice(-numberOfItems))
 	}
@@ -779,31 +759,30 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	map(callback) {
-		if (!isFunction(callback)) {
-			return this
-		}
+		if (!isFunction(callback)) return this
 
 		const array = []
 
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			const newItem = callback(item, i, {
-				reference: this,
-				breakout: this.#startBreakout.bind(this),
-			})
+			let newItem
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				if (this.#loopBreakoutDestructiveFlag) {
-					this.#endBreakout()
-					break
+			try {
+				newItem = callback(item, i, {
+					reference: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					if (error.DESTRUCTIVE) {
+						break
+					}
+
+					const remainingItems = this.#self.slice(i)
+					return new SweetArray(array.concat(remainingItems))
+				} else {
+					throw error
 				}
-
-				this.#endBreakout()
-
-				const remainingItems = this.#self.slice(i)
-				return new SweetArray(array.concat(remainingItems))
 			}
 
 			array[array.length] = newItem
@@ -820,31 +799,30 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	mapRight(callback) {
-		if (!isFunction(callback)) {
-			return this
-		}
+		if (!isFunction(callback)) return this
 
 		const array = []
 
 		for (let i = this.#self.length - 1; i >= 0; i--) {
 			const item = this.#self[i]
-			const newItem = callback(item, i, {
-				reference: this,
-				breakout: this.#startBreakout.bind(this),
-			})
+			let newItem
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				if (this.#loopBreakoutDestructiveFlag) {
-					this.#endBreakout()
-					break
+			try {
+				newItem = callback(item, i, {
+					reference: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					if (error.DESTRUCTIVE) {
+						break
+					}
+
+					const remainingItems = this.#self.slice(0, i + 1)
+					return new SweetArray(remainingItems.concat(array))
+				} else {
+					throw error
 				}
-
-				this.#endBreakout()
-
-				const remainingItems = this.#self.slice(0, i + 1)
-				return new SweetArray(remainingItems.concat(array))
 			}
 
 			array.unshift(item)
@@ -881,33 +859,26 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	reduce(callback, accumulator) {
-		if (!isFunction(callback)) {
-			return this
-		}
-
-		const boundBreakout = this.#startBreakout.bind(this)
-		const reduceBreakout = () => boundBreakout()
+		if (!isFunction(callback)) return this
 
 		const start = accumulator === undefined ? 1 : 0
 		accumulator = accumulator === undefined ? this.#self[0] : accumulator
+
 		for (let i = start; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			const evaluated = callback(accumulator, item, i, {
-				reference: this,
-				breakout: reduceBreakout,
-			})
+			let evaluated
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				if (this.#loopBreakoutDestructiveFlag) {
-					this.#endBreakout()
-					break
+			try {
+				evaluated = callback(accumulator, item, i, {
+					reference: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					return accumulator
+				} else {
+					throw error
 				}
-
-				this.#endBreakout()
-
-				return accumulator
 			}
 
 			accumulator = evaluated
@@ -929,12 +900,7 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	reduceRight(callback, accumulator) {
-		if (!isFunction(callback)) {
-			return this
-		}
-
-		const boundBreakout = this.#startBreakout.bind(this)
-		const reduceBreakout = () => boundBreakout()
+		if (!isFunction(callback)) return this
 
 		const start = this.#self.length - (accumulator === undefined ? 2 : 1)
 		accumulator =
@@ -943,22 +909,19 @@ class SweetArray {
 				: accumulator
 		for (let i = start; i >= 0; i--) {
 			const item = this.#self[i]
-			const evaluated = callback(accumulator, item, i, {
-				reference: this,
-				breakout: reduceBreakout,
-			})
+			let evaluated
 
-			// breaks out of the loop if the breakout function was called
-			// by this iteration
-			if (this.#loopBreakoutFlag) {
-				if (this.#loopBreakoutDestructiveFlag) {
-					this.#endBreakout()
-					break
+			try {
+				evaluated = callback(accumulator, item, i, {
+					reference: this,
+					breakout: this.#breakout.bind(this),
+				})
+			} catch (error) {
+				if (error.message === BREAKOUT) {
+					return accumulator
+				} else {
+					throw error
 				}
-
-				this.#endBreakout()
-
-				return accumulator
 			}
 
 			accumulator = evaluated
@@ -1068,9 +1031,7 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeSharedItems(...arrays) {
-		if (!arrays.length) {
-			return this
-		}
+		if (!arrays.length) return this
 
 		let anchor = this
 
@@ -1112,9 +1073,7 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeType(...datatypes) {
-		if (!items.length) {
-			return this
-		}
+		if (!items.length) return this
 
 		datatypes = datatypes.map(s => (isString(s) ? s.toLowerCase() : s))
 
@@ -1140,9 +1099,7 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeUniqueItems(...arrays) {
-		if (!arrays.length) {
-			return this
-		}
+		if (!arrays.length) return this
 
 		let anchor = this
 
