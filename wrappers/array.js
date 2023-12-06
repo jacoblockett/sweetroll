@@ -283,7 +283,9 @@ class SweetArray {
 	append(...items) {
 		const copy = this.#self.slice(0)
 
-		copy.push(...items)
+		for (let i = 0; i < items.length; i++) {
+			copy[copy.length] = items[i]
+		}
 
 		return new SweetArray(copy)
 	}
@@ -365,7 +367,7 @@ class SweetArray {
 
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			const bool = callback(item, i, {
+			const bool = !!callback(item, i, {
 				self: this,
 				breakout: this.#startBreakout.bind(this),
 			})
@@ -384,7 +386,7 @@ class SweetArray {
 				return new SweetArray(array.concat(remainingItems))
 			}
 
-			if (bool) array.push(item)
+			if (bool) array[array.length] = item
 		}
 
 		return new SweetArray(array)
@@ -407,7 +409,7 @@ class SweetArray {
 
 		for (let i = this.#self.length - 1; i >= 0; i--) {
 			const item = this.#self[i]
-			const bool = callback(item, i, {
+			const bool = !!callback(item, i, {
 				self: this,
 				breakout: this.#startBreakout.bind(this),
 			})
@@ -426,7 +428,7 @@ class SweetArray {
 				return new SweetArray(array.concat(remainingItems))
 			}
 
-			if (bool) array.push(item)
+			if (bool) array[array.length] = item
 		}
 
 		return new SweetArray(array)
@@ -723,7 +725,9 @@ class SweetArray {
 		const copy = this.#self.slice(0)
 
 		if (fromIndex >= this.#self.length - 1) {
-			copy.push(...items)
+			for (let i = 0; i < items.length; i++) {
+				copy[copy.length] = items[i]
+			}
 
 			return new SweetArray(copy)
 		}
@@ -979,7 +983,7 @@ class SweetArray {
 		this.#buildLookup()
 
 		for (let item of this.#lookup) {
-			array.push(item[1][0].value)
+			array[array.length] = item[1][0].value
 		}
 
 		return new SweetArray(array)
