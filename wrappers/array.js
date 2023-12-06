@@ -462,8 +462,8 @@ class SweetArray {
 	 * - Arrays with 10000 or more items must have the `I_KNOW_WHAT_IM_DOING` argument set to `true`.
 	 *
 	 * The `I_KNOW_WHAT_IM_DOING` argument is here as a check against potentially performance-busting operations
-	 * that you might not be aware exists, especially if working with arrays from arbitray sources. This is a
-	 * minor inconvenience for a bit of extra performance security.
+	 * you might not be aware exist, especially if working with arrays from arbitray sources. This is a
+	 * minor inconvenience for a bit of extra performance/memory safety.
 	 *
 	 * @param {number} [depth] The depth to flatten by (default = `1`)
 	 * @param {boolean} [I_KNOW_WHAT_IM_DOING] Setting this to true will disable thrown warnings about potential memory/call stack issues with large depth numbers or arrays
