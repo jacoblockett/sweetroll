@@ -164,11 +164,11 @@ class SweetArray {
 			const item = array[i]
 
 			if (isString(item)) {
-				newArray.push(`'${item}'`)
+				newArray[newArray.length] = `'${item}'`
 			} else if (item instanceof SweetArray) {
-				newArray.push(item.toString())
+				newArray[newArray.length] = item.toString()
 			} else if (isObject(item)) {
-				newArray.push(`{ Record }`)
+				newArray[newArray.length] = `{ Record }`
 			} else if (isArray(item)) {
 				const stringArray = this.#toStringHelper(item)
 
@@ -182,9 +182,9 @@ class SweetArray {
 					}
 				}
 
-				newArray.push(`${newString}]`)
+				newArray[newArray.length] = `${newString}]`
 			} else {
-				newArray.push(item.toString())
+				newArray[newArray.length] = item.toString()
 			}
 		}
 
@@ -335,6 +335,10 @@ class SweetArray {
 	 * @returns {boolean}
 	 */
 	every(callback) {
+		if (!isFunction(callback)) {
+			throw new TypeError(`Expected callback to be a function`)
+		}
+
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
 			const bool = callback(item, i, { self: this })
@@ -1050,7 +1054,7 @@ class SweetArray {
 
 			if (items.includes(item)) continue
 
-			newArray.push(item)
+			newArray[newArray.length] = item
 		}
 
 		return new SweetArray(newArray)
@@ -1122,7 +1126,7 @@ class SweetArray {
 
 			if (datatypes.includes(type)) continue
 
-			newArray.push(item)
+			newArray[newArray.length] = item
 		}
 
 		return new SweetArray(newArray)
