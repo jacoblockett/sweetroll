@@ -195,3 +195,63 @@ test(`SweetArray.firstIndexOf() value check`, () => {
 test(`SweetArray.firstIndexOf(9) value check`, () => {
 	expect(new SweetArray([0, 1, 2, 3]).firstIndexOf(9)).toBeUndefined()
 })
+
+test(`SweetArray.flatten() value check`, () => {
+	const array = [[0], [1], [2]]
+	const expected = array.flat()
+
+	expect(new SweetArray(array).flatten().unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.flatten(1) value check`, () => {
+	const array = [[0], [1], [2]]
+	const expected = array.flat(1)
+
+	expect(new SweetArray(array).flatten(1).unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.flatten(1) value check`, () => {
+	const array = [[0], [1], [2], [[3]]]
+	const expected = array.flat(1)
+
+	expect(new SweetArray(array).flatten(1).unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.flatten(2) value check`, () => {
+	const array = [[0], [1], [2], [[3]]]
+	const expected = array.flat(2)
+
+	expect(new SweetArray(array).flatten(2).unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.flatten(100, true) throw check`, () => {
+	expect(() => new SweetArray(Array(10)).flatten(100, true)).not.toThrow()
+})
+test(`SweetArray.flatten(3, true) [array.length=10000] throw check`, () => {
+	expect(() => new SweetArray(Array(10000)).flatten(3, true)).not.toThrow()
+})
+test(`SweetArray.flatten(100) throw check`, () => {
+	expect(() => new SweetArray(Array(10)).flatten(100)).toThrow()
+})
+test(`SweetArray.flatten() [array.length=10000] throw check`, () => {
+	expect(() => new SweetArray(Array(10000)).flatten()).toThrow()
+})
+
+test(`SweetArray.forEach() pseudo-throw check`, () => {
+	const array = new SweetArray([1, 2, 3, 4, 5])
+	const container = []
+
+	array.forEach(x => (container[container.length] = x))
+
+	expect(container).toStrictEqual([1, 2, 3, 4, 5])
+	expect(array.unwrap()).toStrictEqual([1, 2, 3, 4, 5])
+})
+test(`SweetArray.forEach(with breakout) pseudo-throw check`, () => {
+	const array = new SweetArray([1, 2, 3, 4, 5])
+	const container = []
+
+	array.forEach((x, i, { breakout }) => {
+		if (i > 3) breakout()
+
+		container[container.length] = x
+	})
+
+	expect(container).toStrictEqual([1, 2, 3, 4])
+	expect(array.unwrap()).toStrictEqual([1, 2, 3, 4, 5])
+})
