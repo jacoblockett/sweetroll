@@ -424,11 +424,11 @@ class SweetArray {
 
 				this.#endBreakout()
 
-				const remainingItems = this.#self.slice(i)
-				return new SweetArray(array.concat(remainingItems))
+				const remainingItems = this.#self.slice(0, i + 1)
+				return new SweetArray(remainingItems.concat(array))
 			}
 
-			if (bool) array[array.length] = item
+			if (bool) array.unshift(item)
 		}
 
 		return new SweetArray(array)
@@ -806,7 +806,7 @@ class SweetArray {
 				return new SweetArray(array.concat(remainingItems))
 			}
 
-			array[i] = newItem
+			array[array.length] = newItem
 		}
 
 		return new SweetArray(array)
@@ -843,11 +843,11 @@ class SweetArray {
 
 				this.#endBreakout()
 
-				const remainingItems = this.#self.slice(i)
-				return new SweetArray(array.concat(remainingItems))
+				const remainingItems = this.#self.slice(0, i + 1)
+				return new SweetArray(remainingItems.concat(array))
 			}
 
-			array[i] = newItem
+			array.unshift(item)
 		}
 
 		return new SweetArray(array)
@@ -885,8 +885,6 @@ class SweetArray {
 			return this
 		}
 
-		if (isArray(accumulator)) accumulator = new SweetArray(accumulator)
-
 		const boundBreakout = this.#startBreakout.bind(this)
 		const reduceBreakout = () => boundBreakout()
 
@@ -909,13 +907,13 @@ class SweetArray {
 
 				this.#endBreakout()
 
-				return isArray(accumulator) ? new SweetArray(accumulator) : accumulator
+				return accumulator
 			}
 
-			accumulator = isArray(evaluated) ? new SweetArray(evaluated) : evaluated
+			accumulator = evaluated
 		}
 
-		return isArray(accumulator) ? new SweetArray(accumulator) : accumulator
+		return accumulator
 	}
 
 	/**
@@ -934,8 +932,6 @@ class SweetArray {
 		if (!isFunction(callback)) {
 			return this
 		}
-
-		if (isArray(accumulator)) accumulator = new SweetArray(accumulator)
 
 		const boundBreakout = this.#startBreakout.bind(this)
 		const reduceBreakout = () => boundBreakout()
@@ -962,13 +958,13 @@ class SweetArray {
 
 				this.#endBreakout()
 
-				return isArray(accumulator) ? new SweetArray(accumulator) : accumulator
+				return accumulator
 			}
 
-			accumulator = isArray(evaluated) ? new SweetArray(evaluated) : evaluated
+			accumulator = evaluated
 		}
 
-		return isArray(accumulator) ? new SweetArray(accumulator) : accumulator
+		return accumulator
 	}
 
 	/**
