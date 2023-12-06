@@ -1,3 +1,4 @@
+import getType from "../utils/getType"
 import SweetArray from "../wrappers/array"
 import SweetString from "../wrappers/string"
 
@@ -62,4 +63,135 @@ test(`SweetArray.from(new Map([["a", 1], ["b", 2]])) value check`, () => {
 })
 test(`SweetArray.from(() => {}) throw check`, () => {
 	expect(() => SweetArray.from(() => {})).toThrow()
+})
+
+test(`SweetArray.entries value check`, () => {
+	expect(getType(new SweetArray([1, 2, 3]).entries)).toStrictEqual(
+		"array iterator",
+	)
+})
+test(`SweetArray.keys value check`, () => {
+	expect(getType(new SweetArray([1, 2, 3]).keys)).toStrictEqual(
+		"array iterator",
+	)
+})
+test(`SweetArray.length value check`, () => {
+	expect(new SweetArray([1, 2, 3]).length).toStrictEqual(3)
+})
+
+test(`SweetArray.append("a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).append("a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+
+test(`SweetArray.concat() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).concat().unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.concat(["a", "b", "c"]) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).concat(["a", "b", "c"]).unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+test(`SweetArray.concat(new SweetArray(["a", "b", "c"])) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).concat(new SweetArray(["a", "b", "c"])).unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+
+test(`SweetArray.copy() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).copy().unwrap()).toStrictEqual([1, 2, 3])
+})
+
+test(`SweetArray.every(x => x > 10) value check`, () => {
+	expect(new SweetArray([11, 12, 13]).every(x => x > 10)).toStrictEqual(true)
+})
+test(`SweetArray.every(x => x < 10) value check`, () => {
+	expect(new SweetArray([11, 12, 13]).every(x => x < 10)).toStrictEqual(false)
+})
+test(`SweetArray.every() throw check`, () => {
+	expect(() => new SweetArray([11, 12, 13]).every()).toThrow()
+})
+
+test(`SweetArray.filter(x => x) value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).filter(x => x).unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.filter(x => !x) value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).filter(x => !x).unwrap()).toStrictEqual([
+		0,
+	])
+})
+test(`SweetArray.filter((x, i, { breakout }) => x) value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, 3, 4, 5])
+			.filter((x, i, { breakout }) => {
+				if (i > 2) breakout()
+
+				return x
+			})
+			.unwrap(),
+	).toStrictEqual([1, 2, 3, 4, 5])
+})
+test(`SweetArray.filter((x, i, { breakout }) => x) [destructive=true] value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, 3, 4, 5])
+			.filter((x, i, { breakout }) => {
+				if (i > 2) breakout(true)
+
+				return x
+			})
+			.unwrap(),
+	).toStrictEqual([1, 2])
+})
+
+test(`SweetArray.filterRight(x => x) value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, 3]).filterRight(x => x).unwrap(),
+	).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.filterRight(x => !x) value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, 3]).filterRight(x => !x).unwrap(),
+	).toStrictEqual([0])
+})
+test(`SweetArray.filterRight((x, i, { breakout }) => x) value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, 3, 4, 5])
+			.filterRight((x, i, { breakout }) => {
+				if (i < 3) breakout()
+
+				return x
+			})
+			.unwrap(),
+	).toStrictEqual([0, 1, 2, 3, 4, 5])
+})
+test(`SweetArray.filterRight((x, i, { breakout }) => x) [destructive=true] value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, 3, 4, 5])
+			.filterRight((x, i, { breakout }) => {
+				if (i < 3) breakout(true)
+
+				return x
+			})
+			.unwrap(),
+	).toStrictEqual([3, 4, 5])
+})
+
+test(`SweetArray.firstIndexOf(1) value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).firstIndexOf(1)).toStrictEqual(1)
+})
+test(`SweetArray.firstIndexOf({ test: "a" }) value check`, () => {
+	expect(
+		new SweetArray([0, 1, { test: "a" }, { test: "a" }, 2, 3]).firstIndexOf({
+			test: "a",
+		}),
+	).toStrictEqual(2)
+})
+test(`SweetArray.firstIndexOf() value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).firstIndexOf()).toBeUndefined()
+})
+test(`SweetArray.firstIndexOf(9) value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).firstIndexOf(9)).toBeUndefined()
 })
