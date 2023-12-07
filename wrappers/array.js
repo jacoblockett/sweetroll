@@ -556,9 +556,11 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	getFirst(numberOfItems) {
-		if (!isNumber(numberOfItems) || numberOfItems < 1) {
+		if (!isNumber(numberOfItems)) {
 			numberOfItems = 1
 		}
+
+		if (numberOfItems < 1) return new SweetArray()
 
 		if (!this.#self.length || numberOfItems >= this.#self.length) return this
 
