@@ -518,10 +518,6 @@ class SweetArray {
 	 * Loops over each item in the SweetArray in reverse order, executing the provided
 	 * callback function for each iteration.
 	 *
-	 * - Return note: There was a conscious decision to return the array object to allow for
-	 * chaining methods. `forEach` being unchainable, while `map`, etc. were, always seemed a bit
-	 * inconsistent in native implementations.
-	 *
 	 * - Breakout note: The breakout function, regardless of the options argument passed in, will
 	 * not affect the array returned. This function will always return the original array, unaffected.
 	 * This is a logical side-effect of the forEach loop not manipulating the underlying array.
