@@ -80,15 +80,6 @@ import SweetObject from "./object.js"
  * @returns {any}
  */
 
-/**
- * Callback function to be used with validation loop methods (every, some, etc.).
- *
- * @callback ValidationCallback
- * @param {any} item The current item
- * @param {number} index The index of the current item
- * @param {LoopProperties} props
- */
-
 class SweetArray {
 	#self
 	#lookup
@@ -325,7 +316,7 @@ class SweetArray {
 	 * Tests if every item in the SweetArray passes the test implemented by the provided callback
 	 * function. For a test to pass, the callback function must return a truthy value.
 	 *
-	 * @param {ValidationCallback} callback The callback function to run on each iteration
+	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @returns {boolean}
 	 */
 	every(callback) {
@@ -570,7 +561,7 @@ class SweetArray {
 	/**
 	 * Returns the first item from the SweetArray in which the provided callback returns a truthy value.
 	 *
-	 * @param {ValidationCallback} callback The callback function to run on each iteration
+	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @returns {[item: any, index: number]|undefined}
 	 */
 	getFirstMatch(callback) {
@@ -578,7 +569,7 @@ class SweetArray {
 
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			const bool = callback(item, i, { reference: this })
+			const bool = callback(item, i, { self: this })
 
 			if (bool) return [item, i]
 		}
@@ -626,7 +617,7 @@ class SweetArray {
 	/**
 	 * Returns the last item from the SweetArray in which the provided callback returns a truthy value.
 	 *
-	 * @param {ValidationCallback} callback The callback function to run on each iteration
+	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @returns {[item: any, index: number]|undefined}
 	 */
 	getLastMatch(callback) {
@@ -634,7 +625,7 @@ class SweetArray {
 
 		for (let i = this.#self.length - 1; i >= 0; i--) {
 			const item = this.#self[i]
-			const bool = callback(item, i, { reference: this })
+			const bool = callback(item, i, { self: this })
 
 			if (bool) return [item, i]
 		}
@@ -767,7 +758,7 @@ class SweetArray {
 
 			try {
 				newItem = callback(item, i, {
-					reference: this,
+					self: this,
 					breakout: this.#breakout.bind(this),
 				})
 			} catch (error) {
@@ -807,7 +798,7 @@ class SweetArray {
 
 			try {
 				newItem = callback(item, i, {
-					reference: this,
+					self: this,
 					breakout: this.#breakout.bind(this),
 				})
 			} catch (error) {
@@ -868,7 +859,7 @@ class SweetArray {
 
 			try {
 				evaluated = callback(accumulator, item, i, {
-					reference: this,
+					self: this,
 					breakout: this.#breakout.bind(this),
 				})
 			} catch (error) {
@@ -911,7 +902,7 @@ class SweetArray {
 
 			try {
 				evaluated = callback(accumulator, item, i, {
-					reference: this,
+					self: this,
 					breakout: this.#breakout.bind(this),
 				})
 			} catch (error) {
@@ -1159,7 +1150,7 @@ class SweetArray {
 	 * Tests if at least one item in the SweetArray passes the test implemented by the
 	 * provided callback function. For a test to pass, the callback function must return a truthy value.
 	 *
-	 * @param {ValidationCallback} callback The callback function to run on each iteration
+	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @param {number} [minimum] The minimum number of passes needed for some to return true (default = `1`)
 	 * @returns {boolean}
 	 */
@@ -1171,7 +1162,7 @@ class SweetArray {
 		let passed = 0
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
-			const bool = callback(item, i, { reference: this })
+			const bool = callback(item, i, { self: this })
 
 			if (bool) {
 				passed++
