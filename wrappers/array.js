@@ -559,7 +559,8 @@ class SweetArray {
 	}
 
 	/**
-	 * Returns the first item from the SweetArray in which the provided callback returns a truthy value.
+	 * Returns a "tuple" of the first item and its index from the SweetArray in which the provided
+	 * callback returns a truthy value.
 	 *
 	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @returns {[item: any, index: number]|undefined}
@@ -580,7 +581,7 @@ class SweetArray {
 	/**
 	 * Gets the item at the given index. If the index is negative, this function will count
 	 * backwards from the end of the SweetArray instead. Will return undefined if the index
-	 * is out of range.
+	 * is out of bounds.
 	 *
 	 * @param {number} index The index of the item to get
 	 * @returns {any}
