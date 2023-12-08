@@ -661,7 +661,7 @@ class SweetArray {
 		if (!items.length) items[0] = undefined
 
 		for (let i = 0; i < items.length; i++) {
-			if (!this.#self.includes(items[i])) return true
+			if (this.#self.includes(items[i])) return true
 		}
 
 		return false
