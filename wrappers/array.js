@@ -258,6 +258,8 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	append(...items) {
+		if (!items.length) return this
+
 		const copy = this.#self.slice(0)
 
 		for (let i = 0; i < items.length; i++) {
@@ -851,6 +853,8 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	prepend(...items) {
+		if (!items.length) return this
+
 		const copy = this.#self.slice(0)
 
 		copy.unshift(...items)
