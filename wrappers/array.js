@@ -648,11 +648,7 @@ class SweetArray {
 	 * @returns {boolean}
 	 */
 	hasItem(item) {
-		for (let i = 0; i < items.length; i++) {
-			if (!this.#self.includes(items[i])) return true
-		}
-
-		return false
+		return this.#self.includes(item)
 	}
 
 	/**
