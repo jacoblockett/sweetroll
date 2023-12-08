@@ -626,6 +626,22 @@ class SweetArray {
 	}
 
 	/**
+	 * Checks if all of the provided items exist within the SweetArray.
+	 *
+	 * @param  {...any} items The items to check against the SweetArray
+	 * @returns {boolean}
+	 */
+	hasAllItems(...items) {
+		if (!items.length) throw new Error(`Expected at least one item to check`)
+
+		for (let i = 0; i < items.length; i++) {
+			if (!this.#self.includes(items[i])) return false
+		}
+
+		return true
+	}
+
+	/**
 	 * Checks if the item provided exists within the SweetArray.
 	 *
 	 * @param  {any} item The item to check against the SweetArray
@@ -640,28 +656,12 @@ class SweetArray {
 	}
 
 	/**
-	 * Checks if all of the provided items exist within the SweetArray.
-	 *
-	 * @param  {...any} items The items to check against the SweetArray
-	 * @returns {boolean}
-	 */
-	hasItemsAnd(...items) {
-		if (!items.length) throw new Error(`Expected at least one item to check`)
-
-		for (let i = 0; i < items.length; i++) {
-			if (!this.#self.includes(items[i])) return false
-		}
-
-		return true
-	}
-
-	/**
 	 * Checks if at least one of the provided items exist within the SweetArray.
 	 *
 	 * @param  {...any} items The items to check against the SweetArray
 	 * @returns {boolean}
 	 */
-	hasItemsOr(...items) {
+	hasSomeItems(...items) {
 		if (!items.length) throw new Error(`Expected at least one item to check`)
 
 		for (let i = 0; i < items.length; i++) {
