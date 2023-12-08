@@ -865,7 +865,8 @@ class SweetArray {
 	/**
 	 * Loops over each item in the SweetArray, reducing the item into an accumulator.
 	 * The return value for the provided callback will replace the accumulator on
-	 * each iteration.
+	 * each iteration. If the accumulator is undefined on the first iteration, it will
+	 * be set as the first item of the SweetArray.
 	 *
 	 * - Note: Unlike transformative loop methods, calling breakout, regardless of any options passed in,
 	 * will always break the loop and return whatever the accumulator is at that moment.
@@ -907,7 +908,8 @@ class SweetArray {
 	/**
 	 * Loops over each item in the SweetArray in reverse order, reducing the item into an accumulator.
 	 * The return value for the provided callback will replace the accumulator on
-	 * each iteration.
+	 * each iteration. If the accumulator is undefined on the first iteration, it will
+	 * be set as the last item of the SweetArray.
 	 *
 	 * - Note: Unlike transformative loop methods, calling breakout, regardless of any options passed in,
 	 * will always break the loop and return whatever the accumulator is at that moment.
