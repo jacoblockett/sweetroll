@@ -838,7 +838,7 @@ class SweetArray {
 				}
 			}
 
-			array.unshift(item)
+			array.unshift(newItem)
 		}
 
 		return new SweetArray(array)
