@@ -632,7 +632,7 @@ class SweetArray {
 	 * @returns {boolean}
 	 */
 	hasAllItems(...items) {
-		if (!items.length) throw new Error(`Expected at least one item to check`)
+		if (!items.length) return false
 
 		for (let i = 0; i < items.length; i++) {
 			if (!this.#self.includes(items[i])) return false
@@ -662,7 +662,7 @@ class SweetArray {
 	 * @returns {boolean}
 	 */
 	hasSomeItems(...items) {
-		if (!items.length) throw new Error(`Expected at least one item to check`)
+		if (!items.length) return false
 
 		for (let i = 0; i < items.length; i++) {
 			if (!this.#self.includes(items[i])) return true
