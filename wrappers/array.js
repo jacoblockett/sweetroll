@@ -668,27 +668,67 @@ class SweetArray {
 	}
 
 	/**
-	 * Inserts the given items directly after the given `fromIndex`.
+	 * Inserts the given items directly after the given `index`. If the index is negative,
+	 * this function will count backwards from the end of the SweetArray instead. If the index is
+	 * out of bounds, the array will be filled with empty indices until the desired index is reached.
 	 *
-	 * @param {number} fromIndex The index where you want to start inserting (exclusive)
+	 * @param {number} index The index after which you want to start inserting
 	 * @param  {...any} items The items to insert
 	 */
-	insert(fromIndex, ...items) {
-		if (!isNumber(fromIndex)) return this
+	insert(index, ...items) {
+		if (!isNumber(index)) return this
 
-		fromIndex = fromIndex < 0 ? this.#self.length + fromIndex : fromIndex
+		let copy = this.#self.slice(0)
+		let trueIndex = index
 
-		const copy = this.#self.slice(0)
-
-		if (fromIndex >= this.#self.length - 1) {
-			for (let i = 0; i < items.length; i++) {
-				copy[copy.length] = items[i]
-			}
-
-			return new SweetArray(copy)
+		if (index < 0) {
+			trueIndex = copy.length - -index
 		}
 
-		copy.splice(fromIndex, 0, ...items)
+		if (trueIndex < -1) {
+			const temp = []
+
+			temp.length = Math.abs(trueIndex) - 1
+
+			return new SweetArray(items.concat(temp).concat(copy))
+		} else if (trueIndex >= copy.length) {
+			copy.length += trueIndex - copy.length + 1
+		}
+
+		copy.splice(trueIndex + 1, 0, ...items)
+
+		return new SweetArray(copy)
+	}
+
+	/**
+	 * Inserts the given items directly before the given `index`. If the index is negative,
+	 * this function will count backwards from the end of the SweetArray instead. If the index is
+	 * out of bounds, the array will be filled with empty indices until the desired index is reached.
+	 *
+	 * @param {number} index The index before which you want to start inserting
+	 * @param  {...any} items The items to insert
+	 */
+	insertBefore(index, ...items) {
+		if (!isNumber(index)) return this
+
+		let copy = this.#self.slice(0)
+		let trueIndex = index
+
+		if (index < 0) {
+			trueIndex = copy.length - -index
+		}
+
+		if (trueIndex < 0) {
+			const temp = []
+
+			temp.length = Math.abs(trueIndex)
+
+			return new SweetArray(items.concat(temp).concat(copy))
+		} else if (trueIndex >= copy.length) {
+			copy.length += trueIndex - copy.length
+		}
+
+		copy.splice(trueIndex, 0, ...items)
 
 		return new SweetArray(copy)
 	}
