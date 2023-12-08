@@ -22,8 +22,6 @@ import {
 	arrayFromSet,
 	arrayFromString,
 } from "../utils/arrayFrom.js"
-import createLookupMap from "../utils/createLookupMap.js"
-import serialize from "../utils/serialize.js"
 import SweetString from "./string.js"
 import SweetObject from "./object.js"
 
@@ -85,13 +83,13 @@ class SweetArray {
 	#lookup
 
 	/**
-	 * Creates a SweetArray - an any[] with extra umph.
+	 * Creates a SweetArray - an array with extra umph.
 	 *
 	 * SweetArray methods will never affect the original array. Instead, they will always
 	 * return an instance of a SweetArray, either the original or a copy, where applicable.
 	 * This allows for a pleasant, user-friendly, chainable method experience.
 	 *
-	 * @param {any[]} [array] The array to initialize the SweetArray with (default = `any[]`)
+	 * @param {any[]} [array] The array to initialize the SweetArray with (default = `[]`)
 	 * @param {Object} [options] An options object
 	 * @returns {SweetArray}
 	 */
@@ -109,12 +107,6 @@ class SweetArray {
 		}
 
 		this[INVISIBLE_CHARACTER] = "Use .unwrap() to retrieve the underlying array"
-	}
-
-	#buildLookup() {
-		if (!this.#lookup) {
-			this.#lookup = createLookupMap(this.#self)
-		}
 	}
 
 	/**
@@ -426,12 +418,9 @@ class SweetArray {
 			const result = this.#self.indexOf(item)
 
 			return result === -1 ? undefined : result
-		} else {
-			this.#buildLookup()
-			const lookup = this.#lookup.get(serialize(item))
-
-			return lookup ? lookup[0].index : undefined
 		}
+
+		return undefined
 	}
 
 	/**
@@ -637,54 +626,53 @@ class SweetArray {
 	}
 
 	/**
-	 * Checks if the items provided exist within the SweetArray. If the last item is an object with a key
-	 * called `"method"`, it will be assumed this item is an options argument. The options argument
-	 * will take a key called `"method"`. Method can be either `"AND"` or `"OR"`. If method is `"AND"`, `hasItem`
-	 * will check if every item in the list provided exists in the SweetArray. If method is `"OR"`, `hasItem`
-	 * will check if at least one of the items provied exists in the SweetArray. The default for method is
-	 * `"AND"`.
+	 * Checks if the item provided exists within the SweetArray.
+	 *
+	 * @param  {any} item The item to check against the SweetArray
+	 * @returns {boolean}
+	 */
+	hasItem(item) {
+		for (let i = 0; i < items.length; i++) {
+			if (!this.#self.includes(items[i])) return true
+		}
+
+		return false
+	}
+
+	/**
+	 * Checks if all of the provided items exist within the SweetArray.
 	 *
 	 * @param  {...any} items The items to check against the SweetArray
 	 * @returns {boolean}
 	 */
-	hasItem(...items) {
-		if (!items.length) {
-			throw new Error(`Expected at least one item to check`)
+	hasItemsAnd(...items) {
+		if (!items.length) throw new Error(`Expected at least one item to check`)
+
+		for (let i = 0; i < items.length; i++) {
+			if (!this.#self.includes(items[i])) return false
 		}
 
-		let method = "AND"
-		const finalItem = items[items.length - 1]
-		if (isObject(finalItem)) {
-			if (finalItem.method) {
-				if (finalItem.method === "OR") method = "OR"
-
-				items.pop()
-			}
-		}
-
-		this.#buildLookup()
-
-		if (method === "AND") {
-			for (let i = 0; i < items.length; i++) {
-				const serialized = serialize(items[i])
-
-				if (!this.#lookup.has(serialized)) return false
-			}
-
-			return true
-		} else if (method === "OR") {
-			for (let i = 0; i < items.length; i++) {
-				const serialized = serialize(items[i])
-
-				if (this.#lookup.has(serialized)) return true
-			}
-
-			return false
-		}
+		return true
 	}
 
 	/**
-	 * Inserts the given items directly after the given fromIndex.
+	 * Checks if at least one of the provided items exist within the SweetArray.
+	 *
+	 * @param  {...any} items The items to check against the SweetArray
+	 * @returns {boolean}
+	 */
+	hasItemsOr(...items) {
+		if (!items.length) throw new Error(`Expected at least one item to check`)
+
+		for (let i = 0; i < items.length; i++) {
+			if (!this.#self.includes(items[i])) return true
+		}
+
+		return false
+	}
+
+	/**
+	 * Inserts the given items directly after the given `fromIndex`.
 	 *
 	 * @param {number} fromIndex The index where you want to start inserting (exclusive)
 	 * @param  {...any} items The items to insert
@@ -735,12 +723,9 @@ class SweetArray {
 			const result = this.#self.lastIndexOf(item)
 
 			return result === -1 ? undefined : result
-		} else {
-			this.#buildLookup()
-			const lookup = this.#lookup.get(serialize(item))
-
-			return lookup ? lookup[lookup.length - 1].index : undefined
 		}
+
+		return undefined
 	}
 
 	/**
@@ -930,14 +915,7 @@ class SweetArray {
 	removeDuplicates() {
 		if (this.#self.length < 2) return this
 
-		const array = []
-		this.#buildLookup()
-
-		for (let item of this.#lookup) {
-			array[array.length] = item[1][0].value
-		}
-
-		return new SweetArray(array)
+		return SweetArray.from(new Set(this.#self))
 	}
 
 	/**
