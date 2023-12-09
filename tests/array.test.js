@@ -112,8 +112,8 @@ test(`SweetArray.every(x => x > 10) value check`, () => {
 test(`SweetArray.every(x => x < 10) value check`, () => {
 	expect(new SweetArray([11, 12, 13]).every(x => x < 10)).toStrictEqual(false)
 })
-test(`SweetArray.every() throw check`, () => {
-	expect(() => new SweetArray([11, 12, 13]).every()).toThrow()
+test(`SweetArray.every() value check`, () => {
+	expect(new SweetArray([11, 12, 13]).every()).toStrictEqual(false)
 })
 
 test(`SweetArray.filter(x => x) value check`, () => {
@@ -792,4 +792,140 @@ test(`SweetArray.removeTruthy() value check`, () => {
 	expect(
 		new SweetArray([0, 1, 2, undefined, 3, 4, 5]).removeTruthy().unwrap(),
 	).toStrictEqual([0, undefined])
+})
+
+test(`SweetArray.removeType() value check`, () => {
+	expect(
+		new SweetArray([0, "1", 2, undefined, 3, null, 5]).removeType().unwrap(),
+	).toStrictEqual([0, "1", 2, undefined, 3, null, 5])
+})
+test(`SweetArray.removeType("number") value check`, () => {
+	expect(
+		new SweetArray([0, "1", 2, undefined, 3, null, 5])
+			.removeType("number")
+			.unwrap(),
+	).toStrictEqual(["1", undefined, null])
+})
+test(`SweetArray.removeType("number", "undefined") value check`, () => {
+	expect(
+		new SweetArray([0, "1", 2, undefined, 3, null, 5])
+			.removeType("number", "undefined")
+			.unwrap(),
+	).toStrictEqual(["1", null])
+})
+
+test(`SweetArray.replace() value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).replace().unwrap()).toStrictEqual([
+		1, 2, 3, 4, 5,
+	])
+})
+test(`SweetArray.replace("") value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).replace("").unwrap()).toStrictEqual([
+		1, 2, 3, 4, 5,
+	])
+})
+test(`SweetArray.replace(0) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).replace(0).unwrap()).toStrictEqual([
+		1, 2, 3, 4, 5,
+	])
+})
+test(`SweetArray.replace(0, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(0, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", 4, 5])
+})
+test(`SweetArray.replace(1, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(1, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, "a", "b", "c", 5])
+})
+test(`SweetArray.replace(3, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(3, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+test(`SweetArray.replace(6, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(6, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, 4, 5, , "a", "b", "c"])
+})
+test(`SweetArray.replace(-5, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(-5, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", 4, 5])
+})
+test(`SweetArray.replace(-4, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(-4, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, "a", "b", "c", 5])
+})
+test(`SweetArray.replace(-2, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(-2, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+test(`SweetArray.replace(-6, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(-6, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", 3, 4, 5])
+})
+test(`SweetArray.replace(-10, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).replace(-10, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", , , 1, 2, 3, 4, 5])
+})
+
+test(`SweetArray.reverse() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reverse().unwrap()).toStrictEqual([3, 2, 1])
+})
+
+test(`SweetArray.some() value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).some()).toStrictEqual(false)
+})
+test(`SweetArray.some("a") value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).some("a")).toStrictEqual(false)
+})
+test(`SweetArray.some(item => item > 3) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).some(item => item > 3)).toStrictEqual(
+		true,
+	)
+})
+test(`SweetArray.some(item => item > 3, 3) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).some(item => item > 3, 3),
+	).toStrictEqual(false)
+})
+test(`SweetArray.some(item => item > 5) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).some(item => item > 5)).toStrictEqual(
+		false,
+	)
+})
+
+test(`SweetArray.sort() value check`, () => {
+	const data = [1, 2, 3, 4, 5]
+	const array = new SweetArray(data)
+	const expected = data.sort()
+
+	expect(array.sort().unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.sort(1) value check`, () => {
+	const data = [1, 2, 3, 4, 5]
+	const array = new SweetArray(data)
+	const expected = data.sort()
+
+	expect(array.sort(1).unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.sort("asc") value check`, () => {
+	const data = [1, 2, 3, 4, 5]
+	const array = new SweetArray(data)
+	const expected = data.sort((a, b) => a - b)
+
+	expect(array.sort("asc").unwrap()).toStrictEqual(expected)
+})
+test(`SweetArray.sort((a, b) => a - b) value check`, () => {
+	const data = [1, 2, 3, 4, 5]
+	const array = new SweetArray(data)
+	const expected = data.sort((a, b) => a - b)
+
+	expect(array.sort((a, b) => a - b).unwrap()).toStrictEqual(expected)
 })
