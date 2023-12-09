@@ -1030,42 +1030,6 @@ class SweetArray {
 	}
 
 	/**
-	 * Removes all of the items the arrays have in common and returns the items that were
-	 * unique among each array.
-	 *
-	 * @param {...(any[]|SweetArray)} arrays The comparison arrays. Can be any array literals or SweetArrays
-	 * @returns {SweetArray}
-	 */
-	removeSharedItems(...arrays) {
-		if (!arrays.length) return this
-
-		const itemsToRemove = []
-		const remaining = []
-		for (let i = 0; i < arrays.length; i++) {
-			let array = arrays[i]
-
-			if (!isArray(array) && !(array instanceof SweetArray)) continue
-			if (array instanceof SweetArray) array = array.unwrap()
-
-			for (let j = 0; j < array.length; j++) {
-				const item = array[j]
-
-				if (this.#self.includes(item)) {
-					itemsToRemove[itemsToRemove.length] = item
-				} else {
-					remaining[remaining.length] = item
-				}
-			}
-		}
-
-		return new SweetArray(
-			this.#self
-				.filter(item => !itemsToRemove.includes(item))
-				.concat(remaining),
-		)
-	}
-
-	/**
 	 * Removes truthy items from the SweetArray.
 	 *
 	 * @returns {SweetArray}
@@ -1097,40 +1061,6 @@ class SweetArray {
 		}
 
 		return new SweetArray(newArray)
-	}
-
-	/**
-	 * Removes all of the items unique to both arrays and returns the items that were
-	 * shared among each array.
-	 *
-	 * @param {...any[]} arrays The comparison arrays. Can be any array literals or SweetArrays
-	 * @returns {SweetArray}
-	 */
-	removeUniqueItems(...arrays) {
-		if (!arrays.length) return this
-
-		let anchor = this
-
-		for (let i = 0; i < arrays.length; i++) {
-			const array = arrays[i]
-
-			if (!isArray(array) && !(array instanceof SweetArray)) {
-				continue
-			}
-
-			const comparisonArray =
-				array instanceof SweetArray ? array : new SweetArray(array)
-			const filteredPrimary = anchor.filter(item =>
-				comparisonArray.hasItem(item),
-			)
-			const filteredComparison = comparisonArray.filter(item =>
-				anchor.hasItem(item),
-			)
-
-			anchor = filteredPrimary.concat(filteredComparison)
-		}
-
-		return anchor.removeDuplicates()
 	}
 
 	/**
