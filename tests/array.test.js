@@ -79,6 +79,9 @@ test(`SweetArray.length value check`, () => {
 	expect(new SweetArray([1, 2, 3]).length).toStrictEqual(3)
 })
 
+test(`SweetArray.append() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).append().unwrap()).toStrictEqual([1, 2, 3])
+})
 test(`SweetArray.append("a", "b", "c") value check`, () => {
 	expect(
 		new SweetArray([1, 2, 3]).append("a", "b", "c").unwrap(),
@@ -180,7 +183,7 @@ test(`SweetArray.filterRight((x, i, { breakout }) => x) [destructive=true] value
 })
 
 test(`SweetArray.firstIndexOf(1) value check`, () => {
-	expect(new SweetArray([0, 1, 2, 3]).firstIndexOf(1)).toStrictEqual(1)
+	expect(new SweetArray([0, 1, 1, 2, 3]).firstIndexOf(1)).toStrictEqual(1)
 })
 test(`SweetArray.firstIndexOf() value check`, () => {
 	expect(new SweetArray([0, 1, 2, 3]).firstIndexOf()).toBeUndefined()
@@ -365,4 +368,428 @@ test(`SweetArray.getLastMatch(callback no match) value check`, () => {
 	expect(
 		new SweetArray([1, 2, 3, 4, 5]).getLastMatch(x => x > 10),
 	).toBeUndefined()
+})
+
+test(`SweetArray.hasAllItems(1, "a") value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasAllItems(1, "a"),
+	).toStrictEqual(true)
+})
+test(`SweetArray.hasAllItems(1, "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasAllItems(1, "c"),
+	).toStrictEqual(false)
+})
+test(`SweetArray.hasAllItems() value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasAllItems(),
+	).toStrictEqual(false)
+})
+test(`SweetArray.hasAllItems() value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", undefined]).hasAllItems(),
+	).toStrictEqual(true)
+})
+
+test(`SweetArray.hasItem(1) value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasItem(1),
+	).toStrictEqual(true)
+})
+test(`SweetArray.hasItem("c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasItem("c"),
+	).toStrictEqual(false)
+})
+test(`SweetArray.hasItem() value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasItem(),
+	).toStrictEqual(false)
+})
+test(`SweetArray.hasItem() value check`, () => {
+	expect(new SweetArray([1, 2, "a", "b", undefined]).hasItem()).toStrictEqual(
+		true,
+	)
+})
+
+test(`SweetArray.hasSomeItems(1, "a") value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasSomeItems(1, "a"),
+	).toStrictEqual(true)
+})
+test(`SweetArray.hasSomeItems(1, "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasSomeItems(1, "c"),
+	).toStrictEqual(true)
+})
+test(`SweetArray.hasSomeItems(3, "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasSomeItems(3, "c"),
+	).toStrictEqual(false)
+})
+test(`SweetArray.hasSomeItems() value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", { a: "test" }]).hasSomeItems(),
+	).toStrictEqual(false)
+})
+test(`SweetArray.hasSomeItems() value check`, () => {
+	expect(
+		new SweetArray([1, 2, "a", "b", undefined]).hasSomeItems(),
+	).toStrictEqual(true)
+})
+
+test(`SweetArray.insert(0, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(0, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, "a", "b", "c", 2, 3])
+})
+test(`SweetArray.insert(1, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(1, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, "a", "b", "c", 3])
+})
+test(`SweetArray.insert(2, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(2, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+test(`SweetArray.insert(3, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(3, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, , "a", "b", "c"])
+})
+test(`SweetArray.insert(-1, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(-1, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+test(`SweetArray.insert(-2, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(-2, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, "a", "b", "c", 3])
+})
+test(`SweetArray.insert(-4, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(-4, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", 1, 2, 3])
+})
+test(`SweetArray.insert(-5, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert(-5, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", , 1, 2, 3])
+})
+test(`SweetArray.insert("a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insert("a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3])
+})
+
+test(`SweetArray.insertBefore(0, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(0, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", 1, 2, 3])
+})
+test(`SweetArray.insertBefore(1, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(1, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, "a", "b", "c", 2, 3])
+})
+test(`SweetArray.insertBefore(2, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(2, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, "a", "b", "c", 3])
+})
+test(`SweetArray.insertBefore(3, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(3, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3, "a", "b", "c"])
+})
+test(`SweetArray.insertBefore(-1, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(-1, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, "a", "b", "c", 3])
+})
+test(`SweetArray.insertBefore(-2, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(-2, "a", "b", "c").unwrap(),
+	).toStrictEqual([1, "a", "b", "c", 2, 3])
+})
+test(`SweetArray.insertBefore(-4, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(-4, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", , 1, 2, 3])
+})
+test(`SweetArray.insertBefore(-5, "a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore(-5, "a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", , , 1, 2, 3])
+})
+test(`SweetArray.insertBefore("a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).insertBefore("a", "b", "c").unwrap(),
+	).toStrictEqual([1, 2, 3])
+})
+
+test(`SweetArray.join() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).join()).toStrictEqual("123")
+})
+test(`SweetArray.join("") value check`, () => {
+	expect(new SweetArray([1, 2, 3]).join("")).toStrictEqual("123")
+})
+test(`SweetArray.join("x") value check`, () => {
+	expect(new SweetArray([1, 2, 3]).join("x")).toStrictEqual("1x2x3")
+})
+test(`SweetArray.join(5) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).join(5)).toStrictEqual("123")
+})
+
+test(`SweetArray.lastIndexOf(1) value check`, () => {
+	expect(new SweetArray([0, 1, 1, 2, 3]).lastIndexOf(1)).toStrictEqual(2)
+})
+test(`SweetArray.lastIndexOf() value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).lastIndexOf()).toBeUndefined()
+})
+test(`SweetArray.lastIndexOf(9) value check`, () => {
+	expect(new SweetArray([0, 1, 2, 3]).lastIndexOf(9)).toBeUndefined()
+})
+
+test(`SweetArray.map() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).map().unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.map(1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).map(1).unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.map(x => x) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).map(x => x).unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.map(x => x + 1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).map(x => x + 1).unwrap()).toStrictEqual([
+		2, 3, 4,
+	])
+})
+test(`SweetArray.map(breakout) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5])
+			.map((x, i, { breakout }) => {
+				if (i === 2) breakout()
+
+				return x + 1
+			})
+			.unwrap(),
+	).toStrictEqual([2, 3, 3, 4, 5])
+})
+test(`SweetArray.map(breakout destructive) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5])
+			.map((x, i, { breakout }) => {
+				if (i === 2) breakout(true)
+
+				return x + 1
+			})
+			.unwrap(),
+	).toStrictEqual([2, 3])
+})
+
+test(`SweetArray.mapRight() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).mapRight().unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.mapRight(1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).mapRight(1).unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.mapRight(x => x) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).mapRight(x => x).unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.mapRight(x => x + 1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).mapRight(x => x + 1).unwrap()).toStrictEqual(
+		[2, 3, 4],
+	)
+})
+test(`SweetArray.mapRight(breakout) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5])
+			.mapRight((x, i, { breakout }) => {
+				if (i === 2) breakout()
+
+				return x + 1
+			})
+			.unwrap(),
+	).toStrictEqual([1, 2, 3, 5, 6])
+})
+test(`SweetArray.mapRight(breakout destructive) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5])
+			.mapRight((x, i, { breakout }) => {
+				if (i === 2) breakout(true)
+
+				return x + 1
+			})
+			.unwrap(),
+	).toStrictEqual([5, 6])
+})
+
+test(`SweetArray.prepend() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).prepend().unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.prepend("a", "b", "c") value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).prepend("a", "b", "c").unwrap(),
+	).toStrictEqual(["a", "b", "c", 1, 2, 3])
+})
+
+test(`SweetArray.reduce() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduce().unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.reduce(1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduce(1).unwrap()).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.reduce(() => {}) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduce(() => {})).toBeUndefined()
+})
+test(`SweetArray.reduce((p, c) => p + c) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduce((p, c) => p + c)).toStrictEqual(6)
+})
+test(`SweetArray.reduce((p, c) => p + c, 1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduce((p, c) => p + c, 1)).toStrictEqual(7)
+})
+test(`SweetArray.reduce(breakout) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).reduce((p, c, _, { breakout }) => {
+			if (p >= 3) breakout()
+
+			return p + c
+		}, 1),
+	).toStrictEqual(4)
+})
+
+test(`SweetArray.reduceRight() value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduceRight().unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.reduceRight(1) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduceRight(1).unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.reduceRight(() => {}) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduceRight(() => {})).toBeUndefined()
+})
+test(`SweetArray.reduceRight((p, c) => p + c) value check`, () => {
+	expect(new SweetArray([1, 2, 3]).reduceRight((p, c) => p + c)).toStrictEqual(
+		6,
+	)
+})
+test(`SweetArray.reduceRight((p, c) => p + c, 1) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).reduceRight((p, c) => p + c, 1),
+	).toStrictEqual(7)
+})
+test(`SweetArray.reduceRight(breakout) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3]).reduceRight((p, c, _, { breakout }) => {
+			if (p >= 3) breakout()
+
+			return p + c
+		}),
+	).toStrictEqual(3)
+})
+
+test(`SweetArray.removeDuplicates() value check`, () => {
+	expect(
+		new SweetArray([1, 2, 2, 3]).removeDuplicates().unwrap(),
+	).toStrictEqual([1, 2, 3])
+})
+test(`SweetArray.removeDuplicates() value check`, () => {
+	expect(new SweetArray([1]).removeDuplicates().unwrap()).toStrictEqual([1])
+})
+
+test(`SweetArray.removeFalsey() value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, false]).removeFalsey().unwrap(),
+	).toStrictEqual([1, 2])
+})
+
+test(`SweetArray.removeFromEnd() value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4]).removeFromEnd().unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.removeFromEnd(1) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4]).removeFromEnd(1).unwrap()).toStrictEqual([
+		1, 2, 3,
+	])
+})
+test(`SweetArray.removeFromEnd(2) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4]).removeFromEnd(2).unwrap()).toStrictEqual([
+		1, 2,
+	])
+})
+test(`SweetArray.removeFromEnd(-1)) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4]).removeFromEnd(-1).unwrap()).toStrictEqual(
+		[1, 2, 3, 4],
+	)
+})
+test(`SweetArray.removeFromEnd(5)) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4]).removeFromEnd(5).unwrap()).toStrictEqual(
+		[],
+	)
+})
+
+test(`SweetArray.removeFromFront() value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4]).removeFromFront().unwrap()).toStrictEqual(
+		[2, 3, 4],
+	)
+})
+test(`SweetArray.removeFromFront(1) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4]).removeFromFront(1).unwrap(),
+	).toStrictEqual([2, 3, 4])
+})
+test(`SweetArray.removeFromFront(2) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4]).removeFromFront(2).unwrap(),
+	).toStrictEqual([3, 4])
+})
+test(`SweetArray.removeFromFront(-1)) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4]).removeFromFront(-1).unwrap(),
+	).toStrictEqual([1, 2, 3, 4])
+})
+test(`SweetArray.removeFromFront(5)) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4]).removeFromFront(5).unwrap(),
+	).toStrictEqual([])
+})
+
+test(`SweetArray.removeItem() value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).removeItem().unwrap()).toStrictEqual([
+		1, 2, 3, 4, 5,
+	])
+})
+test(`SweetArray.removeItem(3) value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).removeItem(3).unwrap()).toStrictEqual([
+		1, 2, 4, 5,
+	])
+})
+test(`SweetArray.removeItem(1, 4) value check`, () => {
+	expect(
+		new SweetArray([1, 2, 3, 4, 5]).removeItem(1, 4).unwrap(),
+	).toStrictEqual([2, 3, 5])
+})
+
+test(`SweetArray.removeTruthy() value check`, () => {
+	expect(new SweetArray([1, 2, 3, 4, 5]).removeTruthy().unwrap()).toStrictEqual(
+		[],
+	)
+})
+test(`SweetArray.removeTruthy() value check`, () => {
+	expect(
+		new SweetArray([0, 1, 2, undefined, 3, 4, 5]).removeTruthy().unwrap(),
+	).toStrictEqual([0, undefined])
 })
