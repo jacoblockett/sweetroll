@@ -977,14 +977,16 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeFromEnd(numberOfItems) {
-		numberOfItems =
-			isNumber(numberOfItems) && numberOfItems > 0 ? numberOfItems : 1
+		if (!isNumber(numberOfItems)) {
+			numberOfItems = 1
+		}
+
+		if (numberOfItems < 1) return this
+		if (numberOfItems > this.#self.length) return new SweetArray()
 
 		const copy = this.#self.slice(0)
-		while (numberOfItems > 0 && copy.length > 0) {
-			numberOfItems -= 1
-			copy.pop()
-		}
+
+		copy.length -= numberOfItems
 
 		return new SweetArray(copy)
 	}
@@ -997,16 +999,14 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeFromFront(numberOfItems) {
-		numberOfItems =
-			isNumber(numberOfItems) && numberOfItems > 0 ? numberOfItems : 1
-
-		const copy = this.#self.slice(0)
-		while (numberOfItems > 0 && copy.length > 0) {
-			numberOfItems -= 1
-			copy.shift()
+		if (!isNumber(numberOfItems)) {
+			numberOfItems = 1
 		}
 
-		return new SweetArray(copy)
+		if (numberOfItems < 1) return this
+		if (numberOfItems > this.#self.length) return new SweetArray()
+
+		return new SweetArray(this.#self.slice(numberOfItems))
 	}
 
 	/**
@@ -1016,20 +1016,14 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeItem(...items) {
-		if (!items.length) {
-			throw new Error(`Expected at least one item to remove`)
-		}
-
-		items = items.map(s => serialize(s))
+		if (!items.length) return this
 
 		const newArray = []
 
 		for (let i = 0; i < this.#self.length; i++) {
-			const item = serialize(this.#self[i])
-
-			if (items.includes(item)) continue
-
-			newArray[newArray.length] = item
+			if (!items.includes(this.#self[i])) {
+				newArray[newArray.length] = this.#self[i]
+			}
 		}
 
 		return new SweetArray(newArray)
