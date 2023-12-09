@@ -1033,34 +1033,36 @@ class SweetArray {
 	 * Removes all of the items the arrays have in common and returns the items that were
 	 * unique among each array.
 	 *
-	 * @param {...any[]} arrays The comparison arrays. Can be any array literals or SweetArrays
+	 * @param {...(any[]|SweetArray)} arrays The comparison arrays. Can be any array literals or SweetArrays
 	 * @returns {SweetArray}
 	 */
 	removeSharedItems(...arrays) {
 		if (!arrays.length) return this
 
-		let anchor = this
-
+		const itemsToRemove = []
+		const remaining = []
 		for (let i = 0; i < arrays.length; i++) {
-			const array = arrays[i]
+			let array = arrays[i]
 
-			if (!isArray(array) && !(array instanceof SweetArray)) {
-				continue
+			if (!isArray(array) && !(array instanceof SweetArray)) continue
+			if (array instanceof SweetArray) array = array.unwrap()
+
+			for (let j = 0; j < array.length; j++) {
+				const item = array[j]
+
+				if (this.#self.includes(item)) {
+					itemsToRemove[itemsToRemove.length] = item
+				} else {
+					remaining[remaining.length] = item
+				}
 			}
-
-			const comparisonArray =
-				array instanceof SweetArray ? array : new SweetArray(array)
-			const filteredPrimary = anchor.filter(
-				item => !comparisonArray.hasItem(item),
-			)
-			const filteredComparison = comparisonArray.filter(
-				item => !anchor.hasItem(item),
-			)
-
-			anchor = filteredPrimary.concat(filteredComparison)
 		}
 
-		return anchor.removeDuplicates()
+		return new SweetArray(
+			this.#self
+				.filter(item => !itemsToRemove.includes(item))
+				.concat(remaining),
+		)
 	}
 
 	/**
