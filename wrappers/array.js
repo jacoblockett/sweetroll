@@ -1192,7 +1192,7 @@ class SweetArray {
 				)
 			}
 
-			method = otherSortMethods[comparisonMethod]
+			comparisonMethod = otherSortMethods[comparisonMethod]
 		}
 
 		return new SweetArray(copy.sort(comparisonMethod))
@@ -1268,6 +1268,27 @@ class SweetArray {
 		}
 
 		return `${newString}]`
+	}
+
+	/**
+	 * Returns a SweetString representation of the SweetArray
+	 *
+	 * @returns {SweetString}
+	 */
+	toSweetString() {
+		// recursively convert all items to a string
+		const stringArray = this.#toStringHelper()
+		let newString = "SweetArray ["
+
+		for (let i = 0; i < stringArray.length; i++) {
+			if (i === stringArray.length - 1) {
+				newString += `${stringArray[i]}`
+			} else {
+				newString += `${stringArray[i]}, `
+			}
+		}
+
+		return new SweetString(`${newString}]`)
 	}
 
 	/**
