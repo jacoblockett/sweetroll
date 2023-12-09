@@ -310,13 +310,14 @@ class SweetArray {
 	 * Tests if every item in the SweetArray passes the test implemented by the provided callback
 	 * function. For a test to pass, the callback function must return a truthy value.
 	 *
+	 * - Breakout note: This function does not have access to a breakout function as it simply
+	 * performs validation across the entire array based on the callback result.
+	 *
 	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @returns {boolean}
 	 */
 	every(callback) {
-		if (!isFunction(callback)) {
-			throw new TypeError(`Expected callback to be a function`)
-		}
+		if (!isFunction(callback)) return false
 
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
@@ -1121,52 +1122,49 @@ class SweetArray {
 
 	/**
 	 * Tests if at least one item in the SweetArray passes the test implemented by the
-	 * provided callback function. For a test to pass, the callback function must return a truthy value.
+	 * provided callback function. For a test to pass, the callback function must return a
+	 * truthy value.
+	 *
+	 * - Breakout note: This function does not have access to a breakout function as it simply
+	 * performs validation across the entire array based on the callback result.
 	 *
 	 * @param {LoopCallback} callback The callback function to run on each iteration
 	 * @param {number} [minimum] The minimum number of passes needed for some to return true (default = `1`)
 	 * @returns {boolean}
 	 */
 	some(callback, minimum) {
-		if (!isNumber(minimum)) {
-			minimum = 1
-		}
+		if (!isFunction(callback)) return false
+		if (!isNumber(minimum) || minimum < 1) minimum = 1
 
 		let passed = 0
 		for (let i = 0; i < this.#self.length; i++) {
 			const item = this.#self[i]
 			const bool = callback(item, i, { self: this })
 
-			if (bool) {
-				passed++
-
-				if (passed === minimum) return true
-			}
+			if (bool && passed++ === minimum) return true
 		}
 
 		return false
 	}
 
 	/**
-	 * Sorts the SweetArray according to the method provided.
+	 * Sorts the SweetArray according to the comparison method provided.
 	 *
-	 * - Note: this method, aside from the convenient string method names, strictly follows the
-	 * native `.sort()` function found on native arrays.
+	 * - Note: this function, aside from the convenient string method names, strictly follows the
+	 * native `.sort()` function.
 	 *
 	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort Array.prototype.sort on MDN}
 	 *
-	 * @param {function|SortString<"asc"|"desc"|"lenAsc"|"lenDesc"|"dateAsc"|"dateDesc"|"alphanumAsc"|"alphanumDesc">} [method] Either a callback
-	 * function used for item comparison or a string representing a commonly used sort method
+	 * @param {(a: any, b: any) => number|SortString<"asc"|"desc"|"lenAsc"|"lenDesc"|"dateAsc"|"dateDesc"|"alphanumAsc"|"alphanumDesc">} [comparisonMethod] Either a callback function used for item comparison or a string representing a commonly used sort comparisonMethod
 	 * @returns {SweetArray}
 	 */
-	sort(method) {
+	sort(comparisonMethod) {
 		const copy = this.#self.slice(0)
 
-		if (!isString(method) && !isFunction(method)) {
+		if (!isString(comparisonMethod) && !isFunction(comparisonMethod))
 			return new SweetArray(copy.sort())
-		}
 
-		if (isString(method)) {
+		if (isString(comparisonMethod)) {
 			const otherSortMethods = {
 				asc: (a, b) => a - b,
 				desc: (a, b) => b - a,
@@ -1186,18 +1184,18 @@ class SweetArray {
 					}),
 			}
 
-			if (!Object.hasOwn(otherSortMethods, method)) {
+			if (!Object.hasOwn(otherSortMethods, comparisonMethod)) {
 				throw new Error(
-					`The method "${method}" doesn't exist. Supported methods are ${Object.keys(
+					`The comparisonMethod "${comparisonMethod}" doesn't exist. Supported comparisonMethod are ${Object.keys(
 						otherSortMethods,
 					).join(", ")}`,
 				)
 			}
 
-			method = otherSortMethods[method]
+			method = otherSortMethods[comparisonMethod]
 		}
 
-		return new SweetArray(copy.sort(method))
+		return new SweetArray(copy.sort(comparisonMethod))
 	}
 
 	/**
