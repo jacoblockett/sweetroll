@@ -678,7 +678,7 @@ class SweetArray {
 	 * @param  {...any} items The items to insert
 	 */
 	insert(index, ...items) {
-		if (!isNumber(index)) return this
+		if (!isNumber(index) || !items.length) return this
 
 		let copy = this.#self.slice(0)
 		let trueIndex = index
@@ -711,7 +711,7 @@ class SweetArray {
 	 * @param  {...any} items The items to insert
 	 */
 	insertBefore(index, ...items) {
-		if (!isNumber(index)) return this
+		if (!isNumber(index) || !items.length) return this
 
 		let copy = this.#self.slice(0)
 		let trueIndex = index
@@ -1074,22 +1074,36 @@ class SweetArray {
 	}
 
 	/**
-	 * Replaces items starting at the fromIndex.
+	 * Replaces items starting at the index. If the index is negative, this function will count backwards
+	 * from the end of the SweetArray instead. If the index is out of bounds, the array will be filled
+	 * with empty indices until the desired index is reached.
 	 *
-	 * @param {number} fromIndex The index where you want to start replacing (inclusive)
-	 * @param {...any} items The items to use as a replacement for items starting at fromIndex
+	 * @param {number} index The index where you want to start replacing
+	 * @param {...any} items The items to use as a replacement for items starting at index
 	 * @returns {SweetArray}
 	 */
-	replace(fromIndex, ...items) {
-		if (!isNumber(fromIndex) || !items.length) return this
+	replace(index, ...items) {
+		if (!isNumber(index) || !items.length) return this
 
-		fromIndex = fromIndex < 0 ? this.#self.length + fromIndex : fromIndex
+		let copy = this.#self.slice(0)
+		let trueIndex = index
 
-		if (fromIndex >= this.#self.length) return this
+		if (index < 0) {
+			trueIndex = copy.length - -index
+		}
 
-		const copy = this.#self.slice(0)
+		if (trueIndex < 0) {
+			const temp = []
 
-		copy.splice(fromIndex, items.length, ...items)
+			temp.length = Math.abs(trueIndex)
+
+			copy = temp.concat(copy)
+			trueIndex = 0
+		} else if (trueIndex >= copy.length) {
+			copy.length += trueIndex - copy.length
+		}
+
+		copy.splice(trueIndex, items.length, ...items)
 
 		return new SweetArray(copy)
 	}
