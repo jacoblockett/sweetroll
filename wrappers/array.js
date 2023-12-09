@@ -1045,9 +1045,19 @@ class SweetArray {
 	 * @returns {SweetArray}
 	 */
 	removeType(...datatypes) {
-		if (!items.length) return this
+		if (!datatypes.length) return this
 
-		datatypes = datatypes.map(s => (isString(s) ? s.toLowerCase() : s))
+		datatypes = datatypes.reduce((p, c) => {
+			if (isString(c)) {
+				const lowered = c.toLowerCase()
+
+				if (!p[lowered]) {
+					p[lowered] = true
+				}
+			}
+
+			return p
+		}, {})
 
 		const newArray = []
 
@@ -1055,7 +1065,7 @@ class SweetArray {
 			const item = this.#self[i]
 			const type = getType(item)
 
-			if (datatypes.includes(type)) continue
+			if (datatypes[type]) continue
 
 			newArray[newArray.length] = item
 		}

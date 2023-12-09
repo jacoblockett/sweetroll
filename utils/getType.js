@@ -1,10 +1,15 @@
 export default value => {
-	if (typeof value === "string") return "string"
-	if (typeof value === "number" && !isNaN(value)) return "number"
-	if (typeof value === "boolean") return "boolean"
-	if (typeof value === "function") return "function"
-	if (typeof value === "symbol") return "symbol"
-	if (typeof value === "bigint") return "bigint"
+	if (value === null) return "null"
+	if (value === void 0) return "undefined"
+
+	const typeVal = typeof value
+
+	if (typeVal === "string") return "string"
+	if (typeVal === "number" && !isNaN(value)) return "number"
+	if (typeVal === "boolean") return "boolean"
+	if (typeVal === "function") return "function"
+	if (typeVal === "symbol") return "symbol"
+	if (typeVal === "bigint") return "bigint"
 	if (value instanceof Map) return "map"
 	if (value instanceof Set) return "set"
 	if (value instanceof WeakMap) return "weakmap"
