@@ -80,7 +80,6 @@ import SweetObject from "./object.js"
 
 class SweetArray {
 	#self
-	#lookup
 
 	/**
 	 * Creates a SweetArray - an array with extra umph.
@@ -1118,6 +1117,56 @@ class SweetArray {
 		const copy = this.#self.slice(0)
 
 		return new SweetArray(copy.reverse())
+	}
+
+	/**
+	 * Selects items from the SweetArray at unique indices up to the desiered sample size.
+	 *
+	 * This algorithm utilizes reservior sampling at 0(n) runtime. Be sure to understand memory constraints when
+	 * using this function with large arrays and sample sizes.
+	 *
+	 * @see {@link https://en.wikipedia.org/wiki/Reservoir_sampling Reservior Sampling on Wikipedia}
+	 *
+	 * @param {number} [sampleSize] The size of the sample you want to return (default = `1`)
+	 * @returns {SweetArray}
+	 */
+	sample(sampleSize) {
+		if (!isNumber(sampleSize) || sampleSize < 1) sampleSize = 1
+
+		const reservoir = this.#self.slice(0, sampleSize)
+
+		for (let i = sampleSize; i < this.#self.length; i++) {
+			let j = Math.floor(Math.random() * (i + 1))
+
+			if (j < sampleSize) reservoir[j] = this.#self[i]
+		}
+
+		return new SweetArray(reservoir)
+	}
+
+	/**
+	 * Shuffles the items in the SweetArray.
+	 *
+	 * This function uses the Durstenfeld shuffle algorithm at 0(n) runtime. This algorithm
+	 * is an optimized version of the great Fisher-Yates algorithm.
+	 *
+	 * @see {@link https://en.wikipedia.org/wiki/Fisher-Yates_shuffle#The_modern_algorithm Modernized Durstenfeld algorithm on Wikipedia}
+	 * @see {@link https://en.wikipedia.org/wiki/Fisher-Yates_shuffle Fisher-Yates algorithm on Wikipedia}
+	 *
+	 * @returns {SweetArray}
+	 */
+	shuffle() {
+		const copy = this.#self.slice(0)
+
+		for (let i = copy.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1))
+			const temp = copy[i]
+
+			copy[i] = copy[j]
+			copy[j] = temp
+		}
+
+		return new SweetArray(copy)
 	}
 
 	/**
