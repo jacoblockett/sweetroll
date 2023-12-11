@@ -1120,7 +1120,7 @@ class SweetArray {
 	}
 
 	/**
-	 * Selects items from the SweetArray at unique indices up to the desiered sample size.
+	 * Selects items from the SweetArray at unique indices up to the desired sample size.
 	 *
 	 * This algorithm utilizes reservior sampling at 0(n) runtime. Be sure to understand memory constraints when
 	 * using this function with large arrays and sample sizes.
