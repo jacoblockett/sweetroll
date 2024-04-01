@@ -190,9 +190,7 @@ class SweetArray {
 		}
 
 		if (isObject(input)) {
-			const keysAreNumbers = !Object.keys(input).filter(
-				([key]) => !isNumeric(key, true),
-			).length
+			const keysAreNumbers = !Object.keys(input).filter(([key]) => !isNumeric(key, true)).length
 
 			if (keysAreNumbers) {
 				return new SweetArray(arrayFromObjectWithNumberedKeys(input, callback))
@@ -922,10 +920,7 @@ class SweetArray {
 		if (!isFunction(callback)) return this
 
 		const start = this.#self.length - (accumulator === undefined ? 2 : 1)
-		accumulator =
-			accumulator === undefined
-				? this.#self[this.#self.length - 1]
-				: accumulator
+		accumulator = accumulator === undefined ? this.#self[this.#self.length - 1] : accumulator
 		for (let i = start; i >= 0; i--) {
 			const item = this.#self[i]
 			let evaluated
@@ -1159,11 +1154,7 @@ class SweetArray {
 		const copy = this.#self.slice(0)
 
 		for (let i = copy.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1))
-			const temp = copy[i]
-
-			copy[i] = copy[j]
-			copy[j] = temp
+			const j = (Math.floor(Math.random() * (i + 1))[(copy[i], copy[j])] = [copy[j], copy[i]])
 		}
 
 		return new SweetArray(copy)
