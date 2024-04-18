@@ -1,23 +1,29 @@
 const arrayFromArray = (array, mapCallback) => {
-	if (mapCallback) {
-		for (let i = 0; i < array.length; i++) {
-			array[i] = mapCallback(array[i], i)
+	const copy = array.slice(0)
+
+	if (typeof mapCallback === "function") {
+		for (let i = 0; i < copy.length; i++) {
+			copy[i] = mapCallback(copy[i], i)
 		}
 	}
 
-	return array
+	return copy
 }
 const arrayFromMap = (map, mapCallback) => {
 	const array = []
 
 	let index = 0
-	for (let entry of map) {
-		if (mapCallback) {
-			entry = mapCallback(entry, index)
-		}
 
-		array[index] = entry
-		index++
+	if (typeof mapCallback === "function") {
+		for (let entry of map) {
+			array.push(mapCallback(entry, index))
+			index++
+		}
+	} else {
+		for (let entry of map) {
+			array.push(entry)
+			index++
+		}
 	}
 
 	return array
@@ -27,9 +33,9 @@ const arrayFromNumber = (number, mapCallback) => {
 
 	array.length = number
 
-	if (mapCallback) {
+	if (typeof mapCallback === "function") {
 		for (let i = 0; i < number; i++) {
-			array[i] = mapCallback(undefined, i)
+			array.push(mapCallback(undefined, i))
 		}
 	}
 
@@ -39,7 +45,7 @@ const arrayFromNumber = (number, mapCallback) => {
 const arrayFromObject = (object, mapCallback) => {
 	const entries = Object.entries(object)
 
-	if (mapCallback) {
+	if (typeof mapCallback === "function") {
 		for (let i = 0; i < entries.length; i++) {
 			const entry = entries[i]
 			const key = entry[0]
@@ -73,34 +79,38 @@ const arrayFromObjectWithNumberedKeys = (object, mapCallback) => {
 }
 
 const arrayFromSet = (set, mapCallback) => {
+	if (typeof mapCallback !== "function") return [...set]
+
 	const array = []
 
 	let index = 0
 	for (let value of set) {
-		if (mapCallback) {
-			value = mapCallback(value, index)
-		}
-
-		array[index] = value
+		value = mapCallback(value, index)
+		array.push(value)
 		index++
 	}
 
 	return array
 }
 
-const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" })
 const arrayFromString = (string, mapCallback) => {
+	const segmenter = new Intl.Segmenter()
 	const segments = [...segmenter.segment(string)]
 	const array = []
 
-	for (let i = 0; i < segments.length; i++) {
-		let value = segments[i].segment
+	if (typeof mapCallback === "function") {
+		for (let i = 0; i < segments.length; i++) {
+			let value = segments[i].segment
 
-		if (mapCallback) {
 			value = mapCallback(value, i)
+			array.push(value)
 		}
+	} else {
+		for (let i = 0; i < segments.length; i++) {
+			let value = segments[i].segment
 
-		array[i] = value
+			array.push(value)
+		}
 	}
 
 	return array
