@@ -20,25 +20,25 @@ class SweetObject {
 	}
 
 	/**
-	 * Attempts to find the value at the given path.
+	 * Attempts to find the value at the given jpath.
 	 *
-	 * @param {string|string[]} path The path to find. Can be a string or an array of strings representing the expected dot notation
-	 * @param {any} [defaultReturn] The default return value if the value at the path is undefined or if the path is unresolveable (default = undefined)
+	 * @param {string|string[]} jpath The jpath to find. Can be a string or an array of strings representing the expected dot notation
+	 * @param {any} [defaultReturn] The default return value if the value at the jpath is undefined or if the jpath is unresolveable (default = undefined)
 	 * @returns {any}
 	 */
-	getValue(path, defaultReturn) {
-		const pathError = `Expected path to be either a string or an array of strings.`
+	find(jpath, defaultReturn) {
+		const jpathError = `Expected jpath to be either a string or an array of strings.`
 
-		if (!isString(path) && !isArray(path)) {
+		if (!isString(jpath) && !isArray(jpath)) {
 			throw new Error(pathError)
-		} else if (isArray(path) && path.filter(s => !isString(s)).length) {
+		} else if (isArray(jpath) && jpath.filter(s => !isString(s)).length) {
 			throw new Error(pathError)
-		} else if (isString(path)) {
-			path = path.split(".")
+		} else if (isString(jpath)) {
+			jpath = jpath.split(".")
 		}
 
 		try {
-			const foundValue = path.reduce((p, c) => p[c], this.#self)
+			const foundValue = jpath.reduce((p, c) => p[c], this.#self)
 
 			return foundValue === undefined ? defaultReturn : foundValue
 		} catch {
